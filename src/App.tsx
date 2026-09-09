@@ -1,122 +1,122 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
+import type { PlanetData, ScaleMode, TimeEngineState } from "./types/solar";
+import { PLANETS_DATA } from "./data/planetsData";
+import { SolarSystemCanvas } from "./components/3d/SolarSystemCanvas";
+import { Navbar } from "./components/ui/Navbar";
+import { PlanetSidebar } from "./components/ui/PlanetSidebar";
+import { TimeControls } from "./components/ui/TimeControls";
+import { PlanetDetailDrawer } from "./components/ui/PlanetDetailDrawer";
+import { AiChatAssistant } from "./components/ui/AiChatAssistant";
+import { AiQuizModal } from "./components/ui/AiQuizModal";
+import { ComparisonModal } from "./components/ui/ComparisonModal";
+import { SettingsModal } from "./components/ui/SettingsModal";
+import { soundEngine } from "./services/soundService";
 
-function App() {
-  const [count, setCount] = useState(0)
+export function App() {
+  // Application State
+  const [selectedPlanet, setSelectedPlanet] = useState<PlanetData | null>(null);
+  const [scaleMode, setScaleMode] = useState<ScaleMode>("exploratory");
+  const [showOrbits, setShowOrbits] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [timeEngine, setTimeEngine] = useState<TimeEngineState>({
+    isPlaying: true,
+    speed: 1,
+    isReversed: false,
+  });
+
+  // Modal States
+  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleToggleScale = () => {
+    setScaleMode((prev) =>
+      prev === "exploratory" ? "realistic" : "exploratory",
+    );
+  };
+
+  const handleToggleOrbits = () => {
+    setShowOrbits((prev) => !prev);
+  };
+
+  const handleToggleMute = () => {
+    const muted = soundEngine.toggleMute();
+    setIsMuted(muted);
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="relative w-screen h-screen overflow-hidden bg-slate-950">
+      {/* Top Navbar */}
+      <Navbar
+        onSelectPlanet={setSelectedPlanet}
+        scaleMode={scaleMode}
+        onToggleScale={handleToggleScale}
+        showOrbits={showOrbits}
+        onToggleOrbits={handleToggleOrbits}
+        isMuted={isMuted}
+        onToggleMute={handleToggleMute}
+        onOpenAiChat={() => setIsAiChatOpen(true)}
+        onOpenQuiz={() => setIsQuizOpen(true)}
+        onOpenCompare={() => setIsCompareOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
 
-      <div className="ticks"></div>
+      {/* Main 3D Interactive Canvas */}
+      <SolarSystemCanvas
+        selectedPlanet={selectedPlanet}
+        onSelectPlanet={setSelectedPlanet}
+        scaleMode={scaleMode}
+        timeEngine={timeEngine}
+        showOrbits={showOrbits}
+      />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* Left Planet Navigation Directory */}
+      <PlanetSidebar
+        selectedPlanet={selectedPlanet}
+        onSelectPlanet={setSelectedPlanet}
+      />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Bottom Floating Time Scrubber Controls */}
+      <TimeControls
+        timeEngine={timeEngine}
+        onChangeTimeEngine={setTimeEngine}
+      />
+
+      {/* Selected Planet Details Drawer */}
+      <PlanetDetailDrawer
+        planet={selectedPlanet}
+        onClose={() => setSelectedPlanet(null)}
+        onOpenAiChat={() => setIsAiChatOpen(true)}
+      />
+
+      {/* AstroAI Chat Assistant Drawer */}
+      <AiChatAssistant
+        isOpen={isAiChatOpen}
+        onClose={() => setIsAiChatOpen(false)}
+        selectedPlanet={selectedPlanet}
+      />
+
+      {/* Dynamic AI Space Trivia Quiz Modal */}
+      <AiQuizModal
+        isOpen={isQuizOpen}
+        onClose={() => setIsQuizOpen(false)}
+        planet={selectedPlanet || PLANETS_DATA[2]} // Default Earth
+      />
+
+      {/* Planet Comparison Tool Modal */}
+      <ComparisonModal
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
+    </main>
+  );
 }
 
-export default App
+export default App;
