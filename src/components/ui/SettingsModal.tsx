@@ -63,7 +63,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           <button
             onClick={handleSave}
-            className="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
+            className="w-full py-2.5 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
           >
             {saved ? <Check className="w-4 h-4 text-emerald-300" /> : null}
             {saved ? "Key Saved Successfully!" : "Save Settings"}

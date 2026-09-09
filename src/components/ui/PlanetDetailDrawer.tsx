@@ -310,7 +310,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                 soundEngine.playClick();
                 onOpenAiChat();
               }}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-purple-500/20"
+              className="w-full py-2.5 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-purple-500/20"
             >
               <Info className="w-4 h-4" />
               Chat with AstroAI about {planet.name}

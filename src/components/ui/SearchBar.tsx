@@ -83,7 +83,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectPlanet }) => {
           onClick={handleAiSearch}
           disabled={isAiSearching}
           title="Search with Gemini AI Intent Parser"
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-full text-[10px] font-medium flex items-center gap-1 shadow-md shadow-cyan-500/20 disabled:opacity-50"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2 py-1 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-full text-[10px] font-medium flex items-center gap-1 shadow-md shadow-cyan-500/20 disabled:opacity-50"
         >
           <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
           {isAiSearching ? "AI..." : "AI"}

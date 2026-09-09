@@ -114,7 +114,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
 
             <button
               onClick={loadQuiz}
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full font-semibold text-xs text-white shadow-lg shadow-purple-500/30"
+              className="px-6 py-2.5 bg-linear-to-r from-purple-600 to-indigo-600 rounded-full font-semibold text-xs text-white shadow-lg shadow-purple-500/30"
             >
               Try Again
             </button>

@@ -83,7 +83,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
       {/* Header */}
       <div className="p-4 bg-slate-900/80 border-b border-cyan-500/20 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+          <div className="w-8 h-8 rounded-xl bg-linear-to-tr from-purple-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -183,7 +183,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
         <button
           onClick={() => handleSend()}
           disabled={loading || !input.trim()}
-          className="p-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 text-white disabled:opacity-50 transition-transform transform active:scale-95"
+          className="p-2 rounded-xl bg-linear-to-r from-cyan-600 to-purple-600 text-white disabled:opacity-50 transition-transform transform active:scale-95"
         >
           <Send className="w-4 h-4" />
         </button>

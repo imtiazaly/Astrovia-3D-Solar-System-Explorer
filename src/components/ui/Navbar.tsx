@@ -44,11 +44,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="fixed top-0 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between bg-slate-950/60 backdrop-blur-xl border-b border-cyan-500/20">
       {/* Brand Logo */}
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/30">
+        <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-cyan-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/30">
           <Orbit className="w-5 h-5 text-cyan-200 animate-spin-slow" />
         </div>
         <div>
-          <h1 className="text-sm font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-200 to-white uppercase font-mono">
+          <h1 className="text-sm font-bold tracking-widest text-transparent bg-clip-text bg-linear-to-r from-cyan-300 via-blue-200 to-white uppercase font-mono">
             Astrovia 3D
           </h1>
           <p className="text-[10px] text-cyan-400/70 tracking-wider">
@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             soundEngine.playClick();
             onOpenAiChat();
           }}
-          className="px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-cyan-500/30 border border-cyan-300/30 transition-all transform hover:scale-105"
+          className="px-3 py-2 rounded-xl bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-cyan-500/30 border border-cyan-300/30 transition-all transform hover:scale-105"
         >
           <Sparkles className="w-4 h-4 text-cyan-200 animate-pulse" />
           <span className="hidden sm:inline">AstroAI</span>
