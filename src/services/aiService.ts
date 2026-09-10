@@ -70,7 +70,7 @@ User Context: ${planetContext}
 Keep answers engaging, educational, concise (2-4 paragraphs max), and well-formatted with markdown emojis.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: [
         {
           role: "user",
@@ -176,7 +176,7 @@ Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, plu
 Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
@@ -219,7 +219,7 @@ Respond ONLY with valid JSON in this exact structure:
 ]`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
