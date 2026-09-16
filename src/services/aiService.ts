@@ -213,7 +213,7 @@ Respond ONLY with valid JSON in this exact structure:
     "planetId": "${planet.id}",
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctAnswerIndex": 0,
+    "correctAnswerIndex": index of the correct option (0-3),
     "explanation": "Brief explanation why."
   }
 ]`;
