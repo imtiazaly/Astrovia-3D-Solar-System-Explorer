@@ -19,6 +19,7 @@ export function App() {
   const [scaleMode, setScaleMode] = useState<ScaleMode>("exploratory");
   const [showOrbits, setShowOrbits] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [timeEngine, setTimeEngine] = useState<TimeEngineState>({
     isPlaying: true,
     speed: 1,
@@ -77,12 +78,15 @@ export function App() {
         selectedPlanet={selectedPlanet}
         scaleMode={scaleMode}
         timeEngine={timeEngine}
+        isSidebarCollapsed={isSidebarCollapsed}
       />
 
       {/* Left Planet Navigation Directory */}
       <PlanetSidebar
         selectedPlanet={selectedPlanet}
         onSelectPlanet={setSelectedPlanet}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
       />
 
       {/* Bottom Floating Time Scrubber Controls */}

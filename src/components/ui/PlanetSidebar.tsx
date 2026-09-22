@@ -7,23 +7,33 @@ import { soundEngine } from "../../services/soundService";
 interface PlanetSidebarProps {
   selectedPlanet: PlanetData | null;
   onSelectPlanet: (planet: PlanetData | null) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
   selectedPlanet,
   onSelectPlanet,
+  isCollapsed: externalIsCollapsed,
+  onToggleCollapse,
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isCollapsed = externalIsCollapsed !== undefined ? externalIsCollapsed : internalCollapsed;
+  const toggleCollapse = () => {
+    soundEngine.playClick();
+    if (onToggleCollapse) {
+      onToggleCollapse();
+    } else {
+      setInternalCollapsed(!internalCollapsed);
+    }
+  };
 
   return (
     <>
       {/* Floating Toggle Button (When Collapsed or on Tablet/Mobile) */}
       <div className="fixed left-3 top-20 z-30 lg:hidden">
         <button
-          onClick={() => {
-            soundEngine.playClick();
-            setIsCollapsed(!isCollapsed);
-          }}
+          onClick={toggleCollapse}
           className="p-2 rounded-2xl hud-glass text-cyan-300 border border-cyan-500/30 shadow-lg shadow-black/50 hover:border-cyan-400 transition-all active:scale-95"
           title="Toggle Celestial Directory"
         >
@@ -66,10 +76,7 @@ export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
 
             {/* Collapse / Expand Toggle Button */}
             <button
-              onClick={() => {
-                soundEngine.playClick();
-                setIsCollapsed(!isCollapsed);
-              }}
+              onClick={toggleCollapse}
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
               className="p-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors cursor-pointer"
             >
