@@ -6,7 +6,6 @@ import {
   AlertCircle,
   RefreshCw,
   Sparkles,
-  HelpCircle,
   ArrowRight,
   RotateCcw,
 } from "lucide-react";
@@ -99,7 +98,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-purple-400/40">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-purple-400/40">
             <Sparkles className="w-5 h-5 text-purple-200 animate-pulse" />
           </div>
           <div>
@@ -121,12 +120,14 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
         {!loading && !isCompleted && questions.length > 0 && (
           <div className="mb-4">
             <div className="flex justify-between items-center text-[10px] font-mono-hud text-purple-300 mb-1.5">
-              <span>QUESTION {currentIndex + 1} OF {questions.length}</span>
+              <span>
+                QUESTION {currentIndex + 1} OF {questions.length}
+              </span>
               <span>SCORE: {score} PTS</span>
             </div>
             <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-purple-500/20">
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 transition-all duration-300 rounded-full"
+                className="h-full bg-linear-to-r from-purple-500 to-cyan-400 transition-all duration-300 rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -142,14 +143,15 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
                 Synthesizing Dynamic Planetary Trivia
               </h4>
               <p className="text-xs font-mono-hud text-purple-400/80">
-                Gemini is examining {planet.name}&apos;s real astrophysics data...
+                Gemini is examining {planet.name}&apos;s real astrophysics
+                data...
               </p>
             </div>
           </div>
         ) : isCompleted ? (
           <div className="py-8 text-center space-y-5 animate-in zoom-in-95 duration-200">
             <div className="relative inline-block">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500/20 to-purple-500/20 border border-amber-400/40 flex items-center justify-center mx-auto shadow-xl shadow-amber-500/10">
+              <div className="w-20 h-20 rounded-full bg-linear-to-tr from-amber-500/20 to-purple-500/20 border border-amber-400/40 flex items-center justify-center mx-auto shadow-xl shadow-amber-500/10">
                 <Award className="w-10 h-10 text-amber-400 animate-bounce" />
               </div>
             </div>
@@ -174,7 +176,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
             <div className="flex gap-2 justify-center pt-2">
               <button
                 onClick={loadQuiz}
-                className="px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl font-bold text-xs text-white shadow-lg shadow-purple-500/30 flex items-center gap-2 active:scale-95 cursor-pointer font-mono-hud"
+                className="px-5 py-2.5 bg-linear-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl font-bold text-xs text-white shadow-lg shadow-purple-500/30 flex items-center gap-2 active:scale-95 cursor-pointer font-mono-hud"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Retry Challenge</span>
@@ -253,7 +255,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
                 </p>
                 <button
                   onClick={handleNext}
-                  className="w-full py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-purple-500/30 active:scale-95 cursor-pointer font-mono-hud uppercase tracking-wider"
+                  className="w-full py-2.5 bg-linear-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-purple-500/30 active:scale-95 cursor-pointer font-mono-hud uppercase tracking-wider"
                 >
                   <span>
                     {currentIndex < questions.length - 1

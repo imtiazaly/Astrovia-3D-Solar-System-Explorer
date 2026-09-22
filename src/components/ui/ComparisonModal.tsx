@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Scale, GitCompare, ArrowRightLeft } from "lucide-react";
+import { X, GitCompare } from "lucide-react";
 import type { PlanetData } from "../../types/solar";
 import { PLANETS_DATA } from "../../data/planetsData";
 import { soundEngine } from "../../services/soundService";
@@ -34,7 +34,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40">
             <GitCompare className="w-5 h-5 text-cyan-200" />
           </div>
           <div>
@@ -155,14 +155,24 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                 </td>
               </tr>
               <tr className="hover:bg-cyan-500/5 transition-colors">
-                <td className="py-2.5 px-3 text-slate-400">Distance from Sun</td>
-                <td className="py-2.5 px-3 text-cyan-300">{p1.distanceFromSunAU} AU</td>
-                <td className="py-2.5 px-3 text-cyan-300">{p2.distanceFromSunAU} AU</td>
+                <td className="py-2.5 px-3 text-slate-400">
+                  Distance from Sun
+                </td>
+                <td className="py-2.5 px-3 text-cyan-300">
+                  {p1.distanceFromSunAU} AU
+                </td>
+                <td className="py-2.5 px-3 text-cyan-300">
+                  {p2.distanceFromSunAU} AU
+                </td>
               </tr>
               <tr className="hover:bg-cyan-500/5 transition-colors">
                 <td className="py-2.5 px-3 text-slate-400">Known Moons</td>
-                <td className="py-2.5 px-3 font-bold text-indigo-300">{p1.moonsCount}</td>
-                <td className="py-2.5 px-3 font-bold text-indigo-300">{p2.moonsCount}</td>
+                <td className="py-2.5 px-3 font-bold text-indigo-300">
+                  {p1.moonsCount}
+                </td>
+                <td className="py-2.5 px-3 font-bold text-indigo-300">
+                  {p2.moonsCount}
+                </td>
               </tr>
             </tbody>
           </table>

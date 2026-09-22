@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Key, Check, ShieldCheck, Sparkles, ExternalLink } from "lucide-react";
+import { X, Key, Check, ShieldCheck, Sparkles } from "lucide-react";
 import { getStoredApiKey, setStoredApiKey } from "../../services/aiService";
 import { soundEngine } from "../../services/soundService";
 
@@ -40,7 +40,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40">
             <Key className="w-5 h-5 text-cyan-200" />
           </div>
           <div>
@@ -65,7 +65,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <span>Empower AstroAI Intelligence</span>
           </div>
           <p>
-            Configure your free Google Gemini API key to activate live generative planetary trivia, deep scientific dossiers, and natural language cosmic search.
+            Configure your free Google Gemini API key to activate live
+            generative planetary trivia, deep scientific dossiers, and natural
+            language cosmic search.
           </p>
         </div>
 
@@ -94,7 +96,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             className={`w-full py-3 rounded-2xl font-display font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer uppercase tracking-wider ${
               saved
                 ? "bg-emerald-600 text-white shadow-emerald-500/30 border border-emerald-400/50"
-                : "bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white shadow-cyan-500/30 border border-cyan-300/40"
+                : "bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white shadow-cyan-500/30 border border-cyan-300/40"
             }`}
           >
             {saved ? (

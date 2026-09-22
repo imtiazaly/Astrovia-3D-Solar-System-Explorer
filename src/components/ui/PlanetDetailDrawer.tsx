@@ -70,7 +70,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
   };
 
   return (
-    <div className="fixed right-3 sm:right-6 top-20 bottom-24 z-30 w-[calc(100vw-24px)] sm:w-96 md:w-[420px] hud-glass rounded-3xl p-4 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all duration-300 animate-in slide-in-from-right-6 duration-300 select-none">
+    <div className="fixed right-3 sm:right-6 top-20 bottom-24 z-30 w-[calc(100vw-24px)] sm:w-96 md:w-105 hud-glass rounded-3xl p-4 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all animate-in slide-in-from-right-6 duration-300 select-none">
       {/* Drawer Header */}
       <div className="flex items-start justify-between pb-3.5 border-b border-cyan-500/25">
         <div className="flex items-center gap-3">
@@ -103,7 +103,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
           {/* Audio Voice Narrator Button */}
           <button
             onClick={handleSpeak}
-            title={isSpeaking ? "Pause Audio Narration" : "Listen to Audio Dossier"}
+            title={
+              isSpeaking ? "Pause Audio Narration" : "Listen to Audio Dossier"
+            }
             className={`px-2.5 py-1.5 rounded-xl border text-xs font-mono-hud flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
               isSpeaking
                 ? "bg-cyan-500/30 border-cyan-400 text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.4)] animate-pulse"
@@ -113,7 +115,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
             {isSpeaking ? (
               <>
                 <VolumeX className="w-3.5 h-3.5 text-cyan-300" />
-                <span className="text-[10px] text-cyan-300 font-bold hidden sm:inline">NARRATING</span>
+                <span className="text-[10px] text-cyan-300 font-bold hidden sm:inline">
+                  NARRATING
+                </span>
               </>
             ) : (
               <>
@@ -147,7 +151,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
           }}
           className={`flex-1 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
             activeTab === "overview"
-              ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-400/50 shadow-sm"
+              ? "bg-linear-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-400/50 shadow-sm"
               : "text-slate-400 hover:text-slate-200"
           }`}
         >
@@ -160,7 +164,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
           }}
           className={`flex-1 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
             activeTab === "specs"
-              ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-400/50 shadow-sm"
+              ? "bg-linear-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-400/50 shadow-sm"
               : "text-slate-400 hover:text-slate-200"
           }`}
         >
@@ -174,7 +178,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
           }}
           className={`flex-1 py-1.5 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             activeTab === "ai"
-              ? "bg-gradient-to-r from-purple-500/30 to-indigo-500/30 text-purple-200 border border-purple-400/50 shadow-sm"
+              ? "bg-linear-to-r from-purple-500/30 to-indigo-500/30 text-purple-200 border border-purple-400/50 shadow-sm"
               : "text-purple-400/70 hover:text-purple-300"
           }`}
         >
@@ -203,7 +207,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                   <Globe className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-400 uppercase">Radius</div>
+                  <div className="text-[9px] text-slate-400 uppercase">
+                    Radius
+                  </div>
                   <div className="font-bold text-slate-100 text-xs sm:text-sm">
                     {planet.realRadiusKm.toLocaleString()} km
                   </div>
@@ -216,7 +222,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                   <Thermometer className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-400 uppercase">Surface Temp</div>
+                  <div className="text-[9px] text-slate-400 uppercase">
+                    Surface Temp
+                  </div>
                   <div className="font-bold text-amber-300 text-xs sm:text-sm">
                     {planet.surfaceTempC}°C
                   </div>
@@ -229,7 +237,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                   <Gauge className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-400 uppercase">Gravity</div>
+                  <div className="text-[9px] text-slate-400 uppercase">
+                    Gravity
+                  </div>
                   <div className="font-bold text-emerald-300 text-xs sm:text-sm">
                     {planet.gravityMs2} m/s²
                   </div>
@@ -242,7 +252,9 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                   <Orbit className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-400 uppercase">Known Moons</div>
+                  <div className="text-[9px] text-slate-400 uppercase">
+                    Known Moons
+                  </div>
                   <div className="font-bold text-indigo-300 text-xs sm:text-sm">
                     {planet.moonsCount}
                   </div>
@@ -368,7 +380,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
                 soundEngine.playClick();
                 onOpenAiChat();
               }}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-purple-500/30 border border-purple-400/40 transition-all transform active:scale-98 cursor-pointer font-display tracking-wider uppercase"
+              className="w-full py-3 bg-linear-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-purple-500/30 border border-purple-400/40 transition-all transform active:scale-98 cursor-pointer font-display tracking-wider uppercase"
             >
               <Info className="w-4 h-4 text-purple-200" />
               <span>Ask AstroAI About {planet.name}</span>

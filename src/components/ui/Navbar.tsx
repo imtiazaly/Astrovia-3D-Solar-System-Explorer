@@ -12,7 +12,6 @@ import {
   Search as SearchIcon,
   X,
   Radio,
-  Sliders,
 } from "lucide-react";
 import type { PlanetData, ScaleMode } from "../../types/solar";
 import { SearchBar } from "./SearchBar";
@@ -52,7 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Left: Brand Logo & Mission Badge */}
       <div className="flex items-center gap-3 shrink-0">
         <div className="relative group cursor-pointer">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40 transition-transform group-hover:scale-105">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-cyan-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40 transition-transform group-hover:scale-105">
             <Orbit className="w-5 h-5 text-cyan-200 animate-spin-slow" />
           </div>
           <span className="absolute -bottom-1 -right-1 flex h-2.5 w-2.5">
@@ -63,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-sm sm:text-base font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-200 to-white uppercase font-display">
+            <h1 className="text-sm sm:text-base font-extrabold tracking-widest text-transparent bg-clip-text bg-linear-to-r from-cyan-300 via-blue-200 to-white uppercase font-display">
               Astrovia 3D
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-mono-hud px-1.5 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
@@ -90,7 +89,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="lg:hidden p-2 rounded-xl bg-slate-900/80 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs transition-all active:scale-95"
           title="Search Planets"
         >
-          {mobileSearchOpen ? <X className="w-4 h-4" /> : <SearchIcon className="w-4 h-4" />}
+          {mobileSearchOpen ? (
+            <X className="w-4 h-4" />
+          ) : (
+            <SearchIcon className="w-4 h-4" />
+          )}
         </button>
 
         {/* Control Group 1: Physics & Viewport */}
@@ -106,7 +109,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Scale className="w-3.5 h-3.5 text-cyan-400" />
               <div className="text-left hidden md:block">
-                <span className="text-[9px] text-slate-400 block uppercase leading-none">Scale</span>
+                <span className="text-[9px] text-slate-400 block uppercase leading-none">
+                  Scale
+                </span>
                 <span className="text-[11px] text-cyan-300 font-bold capitalize leading-none">
                   {scaleMode}
                 </span>
@@ -114,8 +119,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             {/* Interactive Tooltip Card */}
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-cyan-300">Planet Scale Mode</div>
-              <div className="text-[9px] text-slate-400">Click to switch Exploratory vs Realistic physics</div>
+              <div className="text-[10px] font-bold text-cyan-300">
+                Planet Scale Mode
+              </div>
+              <div className="text-[9px] text-slate-400">
+                Click to switch Exploratory vs Realistic physics
+              </div>
             </div>
           </div>
 
@@ -132,18 +141,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : "text-slate-400 hover:bg-slate-900"
               }`}
             >
-              <Layers className={`w-3.5 h-3.5 ${showOrbits ? "text-cyan-300" : "text-slate-500"}`} />
+              <Layers
+                className={`w-3.5 h-3.5 ${showOrbits ? "text-cyan-300" : "text-slate-500"}`}
+              />
               <div className="text-left hidden md:block">
-                <span className="text-[9px] text-slate-400 block uppercase leading-none">Orbits</span>
-                <span className={`text-[11px] font-bold leading-none ${showOrbits ? "text-cyan-300" : "text-slate-400"}`}>
+                <span className="text-[9px] text-slate-400 block uppercase leading-none">
+                  Orbits
+                </span>
+                <span
+                  className={`text-[11px] font-bold leading-none ${showOrbits ? "text-cyan-300" : "text-slate-400"}`}
+                >
                   {showOrbits ? "Visible" : "Hidden"}
                 </span>
               </div>
             </button>
             {/* Interactive Tooltip Card */}
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-cyan-300">Orbit Lines Path</div>
-              <div className="text-[9px] text-slate-400">Toggle Keplerian orbital trajectories on/off</div>
+              <div className="text-[10px] font-bold text-cyan-300">
+                Orbit Lines Path
+              </div>
+              <div className="text-[9px] text-slate-400">
+                Toggle Keplerian orbital trajectories on/off
+              </div>
             </div>
           </div>
         </div>
@@ -164,8 +183,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             {/* Tooltip */}
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-cyan-300">Compare Planets</div>
-              <div className="text-[9px] text-slate-400">Side-by-side comparison of mass, radius, and gravity</div>
+              <div className="text-[10px] font-bold text-cyan-300">
+                Compare Planets
+              </div>
+              <div className="text-[9px] text-slate-400">
+                Side-by-side comparison of mass, radius, and gravity
+              </div>
             </div>
           </div>
 
@@ -183,8 +206,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             {/* Tooltip */}
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-purple-950/95 border border-purple-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-purple-300">Gemini Space Quiz</div>
-              <div className="text-[9px] text-slate-300">Dynamic AI-generated trivia challenge for planets</div>
+              <div className="text-[10px] font-bold text-purple-300">
+                Gemini Space Quiz
+              </div>
+              <div className="text-[9px] text-slate-300">
+                Dynamic AI-generated trivia challenge for planets
+              </div>
             </div>
           </div>
 
@@ -195,15 +222,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 soundEngine.playClick();
                 onOpenAiChat();
               }}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-cyan-500/30 border border-cyan-300/40 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-cyan-500/30 border border-cyan-300/40 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-cyan-200 animate-pulse" />
               <span className="font-display tracking-wider">AstroAI</span>
             </button>
             {/* Tooltip */}
             <div className="absolute top-full right-0 mt-2 px-2.5 py-1.5 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-cyan-300">AstroAI Assistant</div>
-              <div className="text-[9px] text-slate-400">Live Gemini-powered astronomy Q&A guide</div>
+              <div className="text-[10px] font-bold text-cyan-300">
+                AstroAI Assistant
+              </div>
+              <div className="text-[9px] text-slate-400">
+                Live Gemini-powered astronomy Q&A guide
+              </div>
             </div>
           </div>
         </div>
@@ -233,7 +264,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="text-[10px] font-bold text-cyan-300">
                 {isMuted ? "Sound: Muted" : "Sound: Active"}
               </div>
-              <div className="text-[9px] text-slate-400">Toggle space sound effects and audio clicks</div>
+              <div className="text-[9px] text-slate-400">
+                Toggle space sound effects and audio clicks
+              </div>
             </div>
           </div>
 
@@ -250,8 +283,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             {/* Tooltip */}
             <div className="absolute top-full right-0 mt-2 px-2.5 py-1.5 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap hidden sm:block">
-              <div className="text-[10px] font-bold text-cyan-300">Settings & API Key</div>
-              <div className="text-[9px] text-slate-400">Configure custom Google Gemini API Key</div>
+              <div className="text-[10px] font-bold text-cyan-300">
+                Settings & API Key
+              </div>
+              <div className="text-[9px] text-slate-400">
+                Configure custom Google Gemini API Key
+              </div>
             </div>
           </div>
         </div>

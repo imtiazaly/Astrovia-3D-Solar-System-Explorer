@@ -43,7 +43,9 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/70 border border-cyan-500/30 backdrop-blur-xl shadow-lg">
           <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
           <span className="tracking-widest uppercase text-cyan-300 font-bold text-[10px]">
-            {timeEngine.isPlaying ? "SIMULATION: STREAMING" : "SIMULATION: PAUSED"}
+            {timeEngine.isPlaying
+              ? "SIMULATION: STREAMING"
+              : "SIMULATION: PAUSED"}
           </span>
           <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/40 text-[9px] font-bold">
             {timeEngine.speed}x
@@ -61,13 +63,17 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
           <div className="flex items-center gap-2 text-cyan-300 font-bold mb-1.5">
             <Crosshair className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
             <span className="tracking-wider uppercase text-[11px] font-display">
-              {selectedPlanet ? `TARGET: ${selectedPlanet.name}` : "FREE ORBITAL CAMERA"}
+              {selectedPlanet
+                ? `TARGET: ${selectedPlanet.name}`
+                : "FREE ORBITAL CAMERA"}
             </span>
           </div>
           <div className="space-y-0.5 text-slate-300/80 text-[9px]">
             <div className="flex justify-between gap-4">
               <span className="text-slate-400">SCALE:</span>
-              <span className="text-cyan-300 uppercase font-semibold">{scaleMode}</span>
+              <span className="text-cyan-300 uppercase font-semibold">
+                {scaleMode}
+              </span>
             </div>
             <div className="flex justify-between gap-4">
               <span className="text-slate-400">TRAJECTORY:</span>
@@ -78,7 +84,9 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
             {selectedPlanet && (
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">DISTANCE:</span>
-                <span className="text-cyan-300 font-semibold">{selectedPlanet.distanceFromSunAU} AU</span>
+                <span className="text-cyan-300 font-semibold">
+                  {selectedPlanet.distanceFromSunAU} AU
+                </span>
               </div>
             )}
           </div>
@@ -99,9 +107,9 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
 
       {/* Sci-Fi Decorative Viewport Framing Brackets (Positioned below Navbar) */}
       {/* Top Left Bracket */}
-      <div className="absolute top-[68px] left-3 w-5 h-5 border-t-2 border-l-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute top-17 left-3 w-5 h-5 border-t-2 border-l-2 border-cyan-400/50 pointer-events-none" />
       {/* Top Right Bracket */}
-      <div className="absolute top-[68px] right-3 w-5 h-5 border-t-2 border-r-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute top-17 right-3 w-5 h-5 border-t-2 border-r-2 border-cyan-400/50 pointer-events-none" />
       {/* Bottom Left Bracket */}
       <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-cyan-400/50 pointer-events-none" />
       {/* Bottom Right Bracket */}

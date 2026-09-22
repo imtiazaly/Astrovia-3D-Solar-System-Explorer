@@ -1,14 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  X,
-  Send,
-  Sparkles,
-  Bot,
-  User,
-  Radio,
-  Trash2,
-  CornerDownLeft,
-} from "lucide-react";
+import { X, Send, Sparkles, Bot, User, Radio, Trash2 } from "lucide-react";
 import type { ChatMessage, PlanetData } from "../../types/solar";
 import { askAstroAI } from "../../services/aiService";
 import { soundEngine } from "../../services/soundService";
@@ -112,12 +103,12 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
   ];
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] md:w-[460px] hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-105 md:w-115 hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="p-4 bg-slate-950/80 border-b border-purple-500/25 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-purple-400/40">
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-purple-600 via-indigo-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-purple-400/40">
               <Sparkles className="w-5 h-5 text-white animate-pulse" />
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
@@ -170,9 +161,13 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
               className="w-2.5 h-2.5 rounded-full shadow-sm"
               style={{ backgroundColor: selectedPlanet.color }}
             />
-            <span>ACTIVE FOCUS: <strong>{selectedPlanet.name}</strong></span>
+            <span>
+              ACTIVE FOCUS: <strong>{selectedPlanet.name}</strong>
+            </span>
           </div>
-          <span className="text-[9px] text-purple-400/70 uppercase">Context Attached</span>
+          <span className="text-[9px] text-purple-400/70 uppercase">
+            Context Attached
+          </span>
         </div>
       )}
 
@@ -188,8 +183,8 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
             <div
               className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
                 msg.sender === "user"
-                  ? "bg-gradient-to-tr from-cyan-600 to-blue-600 text-white border border-cyan-400/40"
-                  : "bg-gradient-to-tr from-purple-900 to-indigo-900 text-purple-200 border border-purple-500/40"
+                  ? "bg-linear-to-tr from-cyan-600 to-blue-600 text-white border border-cyan-400/40"
+                  : "bg-linear-to-tr from-purple-900 to-indigo-900 text-purple-200 border border-purple-500/40"
               }`}
             >
               {msg.sender === "user" ? (
@@ -202,7 +197,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
             <div
               className={`max-w-[82%] p-3.5 rounded-2xl text-xs leading-relaxed font-sans ${
                 msg.sender === "user"
-                  ? "bg-gradient-to-r from-cyan-950/80 to-blue-950/80 text-cyan-100 border border-cyan-500/30 rounded-tr-none shadow-md shadow-cyan-500/10"
+                  ? "bg-linear-to-r from-cyan-950/80 to-blue-950/80 text-cyan-100 border border-cyan-500/30 rounded-tr-none shadow-md shadow-cyan-500/10"
                   : "bg-slate-950/85 text-slate-200 border border-purple-500/30 rounded-tl-none shadow-md shadow-purple-500/10 whitespace-pre-line"
               }`}
             >
@@ -256,7 +251,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
         <button
           onClick={() => handleSend()}
           disabled={loading || !input.trim()}
-          className="p-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white disabled:opacity-40 transition-all transform active:scale-95 shadow-md shadow-purple-500/30 cursor-pointer"
+          className="p-2.5 rounded-xl bg-linear-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white disabled:opacity-40 transition-all transform active:scale-95 shadow-md shadow-purple-500/30 cursor-pointer"
           title="Send Query"
         >
           <Send className="w-4 h-4" />
