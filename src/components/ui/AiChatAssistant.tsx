@@ -103,7 +103,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
   ];
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-105 md:w-115 hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 md:w-[460px] hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="p-4 bg-slate-950/80 border-b border-purple-500/25 flex items-center justify-between">
         <div className="flex items-center gap-3">

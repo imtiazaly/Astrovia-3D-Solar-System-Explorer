@@ -83,8 +83,8 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200 select-none">
-      <div className="w-full max-w-lg hud-glass-purple border border-purple-500/40 rounded-3xl p-5 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.25)] relative text-slate-100 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200 select-none">
+      <div className="w-full max-w-lg max-h-[92dvh] overflow-y-auto custom-scrollbar hud-glass-purple border border-purple-500/40 rounded-3xl p-4 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.25)] relative text-slate-100 animate-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={() => {
