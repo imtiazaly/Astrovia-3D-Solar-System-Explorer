@@ -10,6 +10,7 @@ import { AiChatAssistant } from "./components/ui/AiChatAssistant";
 import { AiQuizModal } from "./components/ui/AiQuizModal";
 import { ComparisonModal } from "./components/ui/ComparisonModal";
 import { SettingsModal } from "./components/ui/SettingsModal";
+import { HudOverlay } from "./components/ui/HudOverlay";
 import { soundEngine } from "./services/soundService";
 
 export function App() {
@@ -18,6 +19,7 @@ export function App() {
   const [scaleMode, setScaleMode] = useState<ScaleMode>("exploratory");
   const [showOrbits, setShowOrbits] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [timeEngine, setTimeEngine] = useState<TimeEngineState>({
     isPlaying: true,
     speed: 1,
@@ -71,10 +73,20 @@ export function App() {
         showOrbits={showOrbits}
       />
 
+      {/* Sci-Fi HUD Mission Control Overlay */}
+      <HudOverlay
+        selectedPlanet={selectedPlanet}
+        scaleMode={scaleMode}
+        timeEngine={timeEngine}
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
+
       {/* Left Planet Navigation Directory */}
       <PlanetSidebar
         selectedPlanet={selectedPlanet}
         onSelectPlanet={setSelectedPlanet}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
       />
 
       {/* Bottom Floating Time Scrubber Controls */}

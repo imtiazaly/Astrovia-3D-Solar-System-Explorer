@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Scale } from "lucide-react";
+import { X, GitCompare } from "lucide-react";
 import type { PlanetData } from "../../types/solar";
 import { PLANETS_DATA } from "../../data/planetsData";
 import { soundEngine } from "../../services/soundService";
@@ -19,110 +19,160 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-      <div className="w-full max-w-2xl bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 shadow-2xl relative text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200 select-none">
+      <div className="w-full max-w-2xl hud-glass border border-cyan-500/35 rounded-3xl p-5 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_rgba(6,182,212,0.2)] relative text-slate-100 animate-in zoom-in-95 duration-200">
+        {/* Close Button */}
         <button
           onClick={() => {
             soundEngine.playClick();
             onClose();
           }}
-          className="absolute top-4 right-4 text-slate-400 hover:text-cyan-300"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-cyan-300 rounded-xl hover:bg-slate-900/80 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-6">
-          <Scale className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-lg font-bold font-mono tracking-wider text-cyan-300">
-            Celestial Side-by-Side Comparison
-          </h3>
+        {/* Modal Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 border border-cyan-400/40">
+            <GitCompare className="w-5 h-5 text-cyan-200" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-extrabold font-display tracking-wider text-slate-100">
+                Celestial Comparison Lab
+              </h3>
+              <span className="text-[9px] font-mono-hud px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+                SIDE-BY-SIDE
+              </span>
+            </div>
+            <p className="text-[10px] text-cyan-400/70 font-mono-hud uppercase">
+              Physical & Orbital Metric Telemetry Differential
+            </p>
+          </div>
         </div>
 
-        {/* Planet Selectors */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="text-xs text-slate-400 mb-1 block">
-              First Body
+        {/* Planet Selectors Cards */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
+          {/* Target 1 Card */}
+          <div className="p-3.5 bg-slate-950/70 rounded-2xl border border-cyan-500/25">
+            <label className="text-[10px] font-mono-hud text-cyan-400/80 mb-1.5 flex items-center gap-1.5 uppercase font-bold">
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{
+                  backgroundColor: p1.color,
+                  boxShadow: `0 0 8px ${p1.color}`,
+                }}
+              />
+              Target Body A
             </label>
             <select
               value={p1.id}
-              onChange={(e) =>
-                setP1(PLANETS_DATA.find((p) => p.id === e.target.value) || p1)
-              }
-              className="w-full p-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-cyan-200"
+              onChange={(e) => {
+                soundEngine.playClick();
+                setP1(PLANETS_DATA.find((p) => p.id === e.target.value) || p1);
+              }}
+              className="w-full p-2.5 bg-slate-900 border border-cyan-500/30 rounded-xl text-xs font-display font-bold text-cyan-200 focus:outline-none focus:border-cyan-400 cursor-pointer"
             >
               {PLANETS_DATA.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {p.name} ({p.type})
                 </option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label className="text-xs text-slate-400 mb-1 block">
-              Second Body
+          {/* Target 2 Card */}
+          <div className="p-3.5 bg-slate-950/70 rounded-2xl border border-cyan-500/25">
+            <label className="text-[10px] font-mono-hud text-cyan-400/80 mb-1.5 flex items-center gap-1.5 uppercase font-bold">
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{
+                  backgroundColor: p2.color,
+                  boxShadow: `0 0 8px ${p2.color}`,
+                }}
+              />
+              Target Body B
             </label>
             <select
               value={p2.id}
-              onChange={(e) =>
-                setP2(PLANETS_DATA.find((p) => p.id === e.target.value) || p2)
-              }
-              className="w-full p-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-cyan-200"
+              onChange={(e) => {
+                soundEngine.playClick();
+                setP2(PLANETS_DATA.find((p) => p.id === e.target.value) || p2);
+              }}
+              className="w-full p-2.5 bg-slate-900 border border-cyan-500/30 rounded-xl text-xs font-display font-bold text-cyan-200 focus:outline-none focus:border-cyan-400 cursor-pointer"
             >
               {PLANETS_DATA.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {p.name} ({p.type})
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Comparison Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left text-slate-300 border-collapse">
+        {/* Metrics Comparison Table */}
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-xs text-left text-slate-300 border-collapse font-mono-hud">
             <thead>
-              <tr className="border-b border-slate-800 text-cyan-400 font-mono">
-                <th className="py-2">Metric</th>
-                <th className="py-2">{p1.name}</th>
-                <th className="py-2">{p2.name}</th>
+              <tr className="border-b border-cyan-500/30 text-cyan-400 text-[10px] uppercase tracking-wider">
+                <th className="py-2.5 px-3">Telemetry Metric</th>
+                <th className="py-2.5 px-3 text-cyan-200">{p1.name}</th>
+                <th className="py-2.5 px-3 text-cyan-200">{p2.name}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono">
-              <tr>
-                <td className="py-2 text-slate-400">Radius (km)</td>
-                <td className="py-2 font-bold text-cyan-200">
+            <tbody className="divide-y divide-slate-800/80">
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">Mean Radius</td>
+                <td className="py-2.5 px-3 font-bold text-cyan-200">
                   {p1.realRadiusKm.toLocaleString()} km
                 </td>
-                <td className="py-2 font-bold text-cyan-200">
+                <td className="py-2.5 px-3 font-bold text-cyan-200">
                   {p2.realRadiusKm.toLocaleString()} km
                 </td>
               </tr>
-              <tr>
-                <td className="py-2 text-slate-400">Mass (kg)</td>
-                <td className="py-2">{p1.massKg}</td>
-                <td className="py-2">{p2.massKg}</td>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">Total Mass</td>
+                <td className="py-2.5 px-3">{p1.massKg}</td>
+                <td className="py-2.5 px-3">{p2.massKg}</td>
               </tr>
-              <tr>
-                <td className="py-2 text-slate-400">Surface Temp</td>
-                <td className="py-2">{p1.surfaceTempC}°C</td>
-                <td className="py-2">{p2.surfaceTempC}°C</td>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">Surface Temp</td>
+                <td className="py-2.5 px-3 font-semibold text-amber-300">
+                  {p1.surfaceTempC}°C
+                </td>
+                <td className="py-2.5 px-3 font-semibold text-amber-300">
+                  {p2.surfaceTempC}°C
+                </td>
               </tr>
-              <tr>
-                <td className="py-2 text-slate-400">Gravity</td>
-                <td className="py-2">{p1.gravityMs2} m/s²</td>
-                <td className="py-2">{p2.gravityMs2} m/s²</td>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">Surface Gravity</td>
+                <td className="py-2.5 px-3 font-semibold text-emerald-300">
+                  {p1.gravityMs2} m/s²
+                </td>
+                <td className="py-2.5 px-3 font-semibold text-emerald-300">
+                  {p2.gravityMs2} m/s²
+                </td>
               </tr>
-              <tr>
-                <td className="py-2 text-slate-400">Distance (AU)</td>
-                <td className="py-2">{p1.distanceFromSunAU} AU</td>
-                <td className="py-2">{p2.distanceFromSunAU} AU</td>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">
+                  Distance from Sun
+                </td>
+                <td className="py-2.5 px-3 text-cyan-300">
+                  {p1.distanceFromSunAU} AU
+                </td>
+                <td className="py-2.5 px-3 text-cyan-300">
+                  {p2.distanceFromSunAU} AU
+                </td>
               </tr>
-              <tr>
-                <td className="py-2 text-slate-400">Moons Count</td>
-                <td className="py-2">{p1.moonsCount}</td>
-                <td className="py-2">{p2.moonsCount}</td>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="py-2.5 px-3 text-slate-400">Known Moons</td>
+                <td className="py-2.5 px-3 font-bold text-indigo-300">
+                  {p1.moonsCount}
+                </td>
+                <td className="py-2.5 px-3 font-bold text-indigo-300">
+                  {p2.moonsCount}
+                </td>
               </tr>
             </tbody>
           </table>
