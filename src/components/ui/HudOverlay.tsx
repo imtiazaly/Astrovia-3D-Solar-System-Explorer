@@ -107,13 +107,13 @@ export const HudOverlay: React.FC<HudOverlayProps> = ({
 
       {/* Sci-Fi Decorative Viewport Framing Brackets (Positioned below Navbar) */}
       {/* Top Left Bracket */}
-      <div className="absolute top-17 left-3 w-5 h-5 border-t-2 border-l-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute top-[58px] sm:top-[68px] left-2 sm:left-3 w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-l-2 border-cyan-400/50 pointer-events-none" />
       {/* Top Right Bracket */}
-      <div className="absolute top-17 right-3 w-5 h-5 border-t-2 border-r-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute top-[58px] sm:top-[68px] right-2 sm:right-3 w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-r-2 border-cyan-400/50 pointer-events-none" />
       {/* Bottom Left Bracket */}
-      <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 w-4 sm:w-5 h-4 sm:h-5 border-b-2 border-l-2 border-cyan-400/50 pointer-events-none" />
       {/* Bottom Right Bracket */}
-      <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-cyan-400/50 pointer-events-none" />
+      <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 w-4 sm:w-5 h-4 sm:h-5 border-b-2 border-r-2 border-cyan-400/50 pointer-events-none" />
     </div>
   );
 };

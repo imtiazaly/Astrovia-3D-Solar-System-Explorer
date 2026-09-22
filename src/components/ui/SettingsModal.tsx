@@ -25,8 +25,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200 select-none">
-      <div className="w-full max-w-md hud-glass border border-cyan-500/35 rounded-3xl p-6 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_rgba(6,182,212,0.2)] relative text-slate-100 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200 select-none">
+      <div className="w-full max-w-md max-h-[92dvh] overflow-y-auto custom-scrollbar hud-glass border border-cyan-500/35 rounded-3xl p-5 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_rgba(6,182,212,0.2)] relative text-slate-100 animate-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={() => {
