@@ -10,6 +10,7 @@ import { AiChatAssistant } from "./components/ui/AiChatAssistant";
 import { AiQuizModal } from "./components/ui/AiQuizModal";
 import { ComparisonModal } from "./components/ui/ComparisonModal";
 import { SettingsModal } from "./components/ui/SettingsModal";
+import { HudOverlay } from "./components/ui/HudOverlay";
 import { soundEngine } from "./services/soundService";
 
 export function App() {
@@ -69,6 +70,13 @@ export function App() {
         scaleMode={scaleMode}
         timeEngine={timeEngine}
         showOrbits={showOrbits}
+      />
+
+      {/* Sci-Fi HUD Mission Control Overlay */}
+      <HudOverlay
+        selectedPlanet={selectedPlanet}
+        scaleMode={scaleMode}
+        timeEngine={timeEngine}
       />
 
       {/* Left Planet Navigation Directory */}
