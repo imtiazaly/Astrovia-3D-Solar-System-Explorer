@@ -107,6 +107,7 @@ export function App() {
         isOpen={isAiChatOpen}
         onClose={() => setIsAiChatOpen(false)}
         selectedPlanet={selectedPlanet}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Dynamic AI Space Trivia Quiz Modal */}
