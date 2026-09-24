@@ -199,34 +199,32 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
               <span>Default Fallback Response Disabled</span>
             </div>
             <p className="text-xs leading-relaxed text-slate-300">
-              AstroAI does not use fake simulated text. To prevent misleading
-              information, the AI chat stays paused until a valid Google Gemini
-              API key is connected.
+              AstroAI does not use fake simulated text. The AI chat is connected directly to our Cloudflare Worker AI Hub.
             </p>
           </div>
 
-          {/* User Guide Card 1: Production Deployment (For Reviewers / 10-15 visitors) */}
+          {/* User Guide Card 1: Production Deployment */}
           <div className="p-4 bg-slate-950/80 border border-cyan-500/30 rounded-2xl space-y-2.5 text-slate-200">
             <div className="flex items-center gap-2 text-cyan-300 font-mono-hud font-bold text-xs">
               <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span>Production Setup (For Project Owner / Deployment)</span>
+              <span>Production Setup (Cloudflare Worker AI Hub)</span>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              If deploying to production (Vercel, Netlify, GitHub Pages), set your API key in environment variables:
+              Connected to Cloudflare Worker AI production backend:
             </p>
             <div className="p-2.5 bg-slate-900 rounded-xl border border-cyan-500/20 font-mono-hud text-[10px] text-cyan-300">
-              VITE_GEMINI_API_KEY=your_gemini_api_key
+              https://ai-hub.imtiyazalye.workers.dev/api/chat
             </div>
             <p className="text-[10px] text-cyan-400/80">
-              ✨ <strong>Benefit:</strong> All 10-15 visitors/reviewers get seamless out-of-the-box AI access without needing to generate their own keys!
+              ✨ <strong>Benefit:</strong> All visitors get seamless out-of-the-box AI access without needing any configuration!
             </p>
           </div>
 
-          {/* User Guide Card 2: Individual Visitor Key Input */}
+          {/* User Guide Card 2 */}
           <div className="p-4 bg-slate-950/80 border border-purple-500/30 rounded-2xl space-y-2.5 text-slate-200">
             <div className="flex items-center gap-2 text-purple-300 font-mono-hud font-bold text-xs">
               <Key className="w-4 h-4 text-purple-400 shrink-0" />
-              <span>Visitor Setup (Custom Gemini API Key)</span>
+              <span>System Setup (Cloudflare Worker AI Hub)</span>
             </div>
             <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-slate-300 leading-relaxed">
               <li>

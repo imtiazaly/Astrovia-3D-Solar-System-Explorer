@@ -189,7 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-purple-950/95 border border-purple-500/40 rounded-xl shadow-xl text-left pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap">
               <div className="text-[10px] font-bold text-purple-300">
-                Gemini Space Quiz
+                AstroAI Space Quiz
               </div>
               <div className="text-[9px] text-slate-300">
                 Dynamic AI-generated trivia challenge for planets
@@ -214,7 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 AstroAI Assistant
               </div>
               <div className="text-[9px] text-slate-400">
-                Live Gemini-powered astronomy Q&A guide
+                Live AI-powered astrophysics copilot
               </div>
             </div>
           </div>
