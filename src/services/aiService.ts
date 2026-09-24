@@ -87,7 +87,17 @@ User Context: ${planetContext}`;
     }
 
     const data = await response.json();
-    let resultText = data.response || data.choices?.[0]?.text || data.text || "";
+    let resultText = "";
+
+    if (typeof data.response === "string") {
+      resultText = data.response;
+    } else if (data.choices?.[0]?.message?.content) {
+      resultText = data.choices[0].message.content;
+    } else if (data.choices?.[0]?.text) {
+      resultText = data.choices[0].text;
+    } else if (data.response) {
+      resultText = typeof data.response === "object" ? JSON.stringify(data.response) : String(data.response);
+    }
 
     // Clean up any stray turn markers or fake dialogue artifacts
     resultText = resultText
@@ -204,8 +214,15 @@ export const parseNaturalLanguageSearch = async (
 
     if (response.ok) {
       const data = await response.json();
-      const rawText = (data.response || data.choices?.[0]?.text || "").trim().toLowerCase();
-      const result = rawText.replace(/[^a-z]/g, "");
+      let rawText = "";
+      if (typeof data.response === "string") {
+        rawText = data.response;
+      } else if (data.choices?.[0]?.message?.content) {
+        rawText = data.choices[0].message.content;
+      } else if (data.choices?.[0]?.text) {
+        rawText = data.choices[0].text;
+      }
+      const result = rawText.trim().toLowerCase().replace(/[^a-z]/g, "");
       if (ALL_CELESTIAL_BODIES.some((b) => b.id === result)) {
         return result;
       }
@@ -224,7 +241,14 @@ export const generatePlanetQuiz = async (
   planet: PlanetData,
 ): Promise<QuizQuestion[]> => {
   try {
-    const systemPrompt = `Generate 3 multiple choice quiz questions about ${planet.name} based on real astrophysics facts. Respond ONLY with valid JSON array in this exact structure without markdown code blocks:
+    const systemPrompt = `You are an astrophysics quiz generator for Astrovia. Generate 3 multiple choice quiz questions about ${planet.name} based on verified astrophysics facts.
+
+STRICT JSON OUTPUT REQUIREMENTS:
+1. Respond ONLY with a valid JSON array of 3 objects.
+2. Do NOT include markdown formatting (\`\`\`json), intro text, or extra characters.
+3. Keep explanation text under 15 words per question to keep JSON compact.
+
+Exact JSON Structure:
 [
   {
     "id": "q1",
@@ -232,7 +256,7 @@ export const generatePlanetQuiz = async (
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
     "correctAnswerIndex": 0,
-    "explanation": "Brief explanation why."
+    "explanation": "Short 1-sentence explanation."
   }
 ]`;
 
@@ -244,21 +268,45 @@ export const generatePlanetQuiz = async (
           { role: "system", content: systemPrompt },
           { role: "user", content: `Generate 3 quiz questions for ${planet.name}` },
         ],
-        max_tokens: 768,
+        max_tokens: 1536,
         temperature: 0.2,
       }),
     });
 
     if (response.ok) {
       const data = await response.json();
-      const text = data.response || data.choices?.[0]?.text || "";
-      const cleanJson = text
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
-      const questions: QuizQuestion[] = JSON.parse(cleanJson);
-      if (Array.isArray(questions) && questions.length > 0) {
-        return questions;
+
+      // Case 1: Cloudflare Workers AI already parsed response into a JavaScript Array of Objects!
+      if (Array.isArray(data.response) && data.response.length > 0) {
+        return data.response as QuizQuestion[];
+      }
+
+      // Case 2: Extract string from response or choices message content
+      let text = "";
+      if (typeof data.response === "string") {
+        text = data.response;
+      } else if (data.choices?.[0]?.message?.content) {
+        text = data.choices[0].message.content;
+      } else if (data.choices?.[0]?.text) {
+        text = data.choices[0].text;
+      }
+
+      if (text) {
+        // Remove markdown code blocks if any
+        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+        // Extract JSON array between first '[' and last ']'
+        const startIdx = text.indexOf("[");
+        const endIdx = text.lastIndexOf("]");
+        
+        if (startIdx !== -1 && endIdx > startIdx) {
+          text = text.substring(startIdx, endIdx + 1);
+        }
+
+        const questions: QuizQuestion[] = JSON.parse(text);
+        if (Array.isArray(questions) && questions.length > 0) {
+          return questions;
+        }
       }
     }
   } catch (e) {
