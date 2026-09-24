@@ -52,12 +52,19 @@ export const askAstroAI = async (
     ? `The user is currently inspecting ${selectedPlanet.name}. Focus response on ${selectedPlanet.name} if relevant.`
     : "No specific planet selected.";
 
-  const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astronomy AI assistant guiding users through 3D Solar System Explorer (Astrovia).
-Use the following verified NASA dataset as your primary ground truth for numbers and facts:
+  const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astrophysics AI assistant guiding users through Astrovia (3D Solar System Explorer).
+
+CRITICAL ACCURACY & BEHAVIOR RULES:
+1. Use the verified NASA ground-truth dataset below as your strict reference.
+2. Saturn has 146 moons and holds the record for MOST MOONS in the Solar System. Jupiter has 95 moons. NEVER state Jupiter has the most moons.
+3. Mercury temperatures range from 427°C (day) to -173°C (night). Venus is the hottest planet at 464°C.
+4. Answer the user directly and concisely (2-3 paragraphs max). Use engaging markdown formatting and emojis.
+5. STRICT SINGLE TURN: You are ONLY providing the answer. NEVER simulate user questions, NEVER append extra "User Question:" lines, and NEVER generate fake dialogue turns.
+
+NASA Ground-Truth Dataset:
 ${datasetContext}
 
-User Context: ${planetContext}
-Keep answers engaging, educational, concise (2-4 paragraphs max), and well-formatted with markdown emojis.`;
+User Context: ${planetContext}`;
 
   try {
     const response = await fetch(WORKER_URL, {
@@ -66,7 +73,12 @@ Keep answers engaging, educational, concise (2-4 paragraphs max), and well-forma
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: `${systemPrompt}\n\nUser Question: ${userPrompt}`,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 1024,
+        temperature: 0.3,
       }),
     });
 
@@ -75,7 +87,13 @@ Keep answers engaging, educational, concise (2-4 paragraphs max), and well-forma
     }
 
     const data = await response.json();
-    const resultText = data.response || data.choices?.[0]?.text || data.text || "";
+    let resultText = data.response || data.choices?.[0]?.text || data.text || "";
+
+    // Clean up any stray turn markers or fake dialogue artifacts
+    resultText = resultText
+      .replace(/^AstroAI:\s*/i, "")
+      .replace(/User Question:[\s\S]*/i, "")
+      .trim();
 
     if (!resultText) {
       throw new Error("Received empty text response from Cloudflare Worker AI.");
@@ -169,14 +187,19 @@ export const parseNaturalLanguageSearch = async (
     return "sun";
 
   try {
-    const prompt = `Identify which planet or star in our solar system matches this user query: "${query}".
-Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto.
-Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
+    const systemPrompt = `Identify which planet or star in our solar system matches the user query. Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto. Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
 
     const response = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: prompt }),
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: query },
+        ],
+        max_tokens: 30,
+        temperature: 0.1,
+      }),
     });
 
     if (response.ok) {
@@ -201,8 +224,7 @@ export const generatePlanetQuiz = async (
   planet: PlanetData,
 ): Promise<QuizQuestion[]> => {
   try {
-    const prompt = `Generate 3 multiple choice quiz questions about ${planet.name} based on real astrophysics facts.
-Respond ONLY with valid JSON in this exact structure:
+    const systemPrompt = `Generate 3 multiple choice quiz questions about ${planet.name} based on real astrophysics facts. Respond ONLY with valid JSON array in this exact structure without markdown code blocks:
 [
   {
     "id": "q1",
@@ -217,7 +239,14 @@ Respond ONLY with valid JSON in this exact structure:
     const response = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: prompt }),
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `Generate 3 quiz questions for ${planet.name}` },
+        ],
+        max_tokens: 768,
+        temperature: 0.2,
+      }),
     });
 
     if (response.ok) {
