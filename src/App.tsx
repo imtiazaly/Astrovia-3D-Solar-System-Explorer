@@ -9,7 +9,6 @@ import { PlanetDetailDrawer } from "./components/ui/PlanetDetailDrawer";
 import { AiChatAssistant } from "./components/ui/AiChatAssistant";
 import { AiQuizModal } from "./components/ui/AiQuizModal";
 import { ComparisonModal } from "./components/ui/ComparisonModal";
-import { SettingsModal } from "./components/ui/SettingsModal";
 import { HudOverlay } from "./components/ui/HudOverlay";
 import { soundEngine } from "./services/soundService";
 
@@ -30,7 +29,6 @@ export function App() {
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleToggleScale = () => {
     setScaleMode((prev) =>
@@ -61,7 +59,6 @@ export function App() {
         onOpenAiChat={() => setIsAiChatOpen(true)}
         onOpenQuiz={() => setIsQuizOpen(true)}
         onOpenCompare={() => setIsCompareOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Main 3D Interactive Canvas */}
@@ -107,7 +104,6 @@ export function App() {
         isOpen={isAiChatOpen}
         onClose={() => setIsAiChatOpen(false)}
         selectedPlanet={selectedPlanet}
-        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Dynamic AI Space Trivia Quiz Modal */}
@@ -121,12 +117,6 @@ export function App() {
       <ComparisonModal
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}
-      />
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
       />
     </main>
   );
