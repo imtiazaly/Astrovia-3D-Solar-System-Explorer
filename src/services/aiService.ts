@@ -127,77 +127,135 @@ export const parseNaturalLanguageSearch = async (
 ): Promise<string | null> => {
   const q = query.toLowerCase().trim();
 
-  // Fast client-side keyword matching
+  // 1. Extended Multilingual (English, Roman Urdu, Hindi) Fast Heuristics
+  if (
+    q.includes("door") ||
+    q.includes("dur") ||
+    q.includes("farthest") ||
+    q.includes("furthest") ||
+    q.includes("aakhri") ||
+    q.includes("akhri") ||
+    q.includes("distant")
+  )
+    return "neptune";
+
+  if (
+    q.includes("garm") ||
+    q.includes("garam") ||
+    q.includes("hottest") ||
+    q.includes("tapti") ||
+    q.includes("toxic") ||
+    q.includes("morning star")
+  )
+    return "venus";
+
+  if (
+    q.includes("bara") ||
+    q.includes("bada") ||
+    q.includes("largest") ||
+    q.includes("biggest") ||
+    q.includes("azeem") ||
+    q.includes("great red spot")
+  )
+    return "jupiter";
+
   if (
     q.includes("red") ||
+    q.includes("surkh") ||
+    q.includes("laal") ||
+    q.includes("lal") ||
     q.includes("mars") ||
     q.includes("rusty") ||
     q.includes("olympus")
   )
     return "mars";
-  if (
-    q.includes("hot") ||
-    q.includes("toxic") ||
-    q.includes("venus") ||
-    q.includes("morning star")
-  )
-    return "venus";
+
   if (
     q.includes("ring") ||
+    q.includes("chhalle") ||
+    q.includes("chala") ||
     q.includes("saturn") ||
-    q.includes("jewel") ||
     q.includes("titan")
   )
     return "saturn";
+
   if (
-    q.includes("giant") ||
-    q.includes("largest") ||
-    q.includes("biggest") ||
-    q.includes("jupiter") ||
-    q.includes("red spot")
-  )
-    return "jupiter";
-  if (
-    q.includes("blue") ||
-    q.includes("water") ||
-    q.includes("earth") ||
-    q.includes("home") ||
-    q.includes("life")
-  )
-    return "earth";
-  if (
+    q.includes("qareeb") ||
+    q.includes("kareeb") ||
     q.includes("closest") ||
-    q.includes("swift") ||
+    q.includes("pehla") ||
     q.includes("mercury") ||
-    q.includes("smallest planet")
+    q.includes("smallest")
   )
     return "mercury";
+
   if (
+    q.includes("thanda") ||
+    q.includes("coldest") ||
     q.includes("sideways") ||
     q.includes("tilt") ||
     q.includes("uranus") ||
     q.includes("cyan")
   )
     return "uranus";
+
   if (
-    q.includes("wind") ||
-    q.includes("dark blue") ||
-    q.includes("neptune") ||
-    q.includes("triton")
+    q.includes("blue") ||
+    q.includes("water") ||
+    q.includes("earth") ||
+    q.includes("home") ||
+    q.includes("life") ||
+    q.includes("habitable") ||
+    q.includes("zameen") ||
+    q.includes("dharti")
   )
-    return "neptune";
-  if (q.includes("dwarf") || q.includes("pluto") || q.includes("kuiper"))
+    return "earth";
+
+  if (
+    q.includes("dwarf") ||
+    q.includes("pluto") ||
+    q.includes("kuiper") ||
+    q.includes("chhota")
+  )
     return "pluto";
+
   if (
     q.includes("star") ||
     q.includes("sun") ||
+    q.includes("suraj") ||
+    q.includes("sooraj") ||
     q.includes("center") ||
     q.includes("light")
   )
     return "sun";
 
+  // Check direct name match
+  const directMatch = ALL_CELESTIAL_BODIES.find(
+    (b) => q.includes(b.id) || q.includes(b.name.toLowerCase()),
+  );
+  if (directMatch) return directMatch.id;
+
+  // 2. Multilingual RAG AI Intent Classifier via Cloudflare Worker AI
   try {
-    const systemPrompt = `Identify which planet or star in our solar system matches the user query. Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto. Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
+    const systemPrompt = `You are AstroAI Search Intent Classifier for 3D Solar System Explorer (Astrovia).
+Your task is to understand natural language search queries in ANY language (English, Roman Urdu, Urdu, Hindi, Spanish, etc.) and map complex sentences to the single best matching celestial body ID.
+
+Multilingual & Astrophysics Knowledge Base:
+- "sun": Central star, suraj, light, center of solar system.
+- "mercury": Closest planet to Sun, smallest, pehla planet, pehla kawkab, sab se qareeb.
+- "venus": Hottest planet (464°C), morning star, sab se garm, sab se garam planet.
+- "earth": Life, oceans, home, zameen, dharti, humara kawkab.
+- "mars": Red planet, rusty, Olympus Mons, surkh sayara, laal planet, laal sayara.
+- "jupiter": Largest planet, gas giant, Great Red Spot, sab se bara planet, sab se bada planet, sab se azeem.
+- "saturn": Ringed planet, 146 moons, chhalle wala planet, chhalle wala sayara.
+- "uranus": Coldest planet, tilted sideways, ice giant, cyan, sab se thanda planet.
+- "neptune": Farthest major planet, windiest, dark blue, sab se door planet, sab se dur planet, aakhri planet.
+- "pluto": Dwarf planet, Kuiper belt, farthest dwarf, chhota planet.
+
+Instructions:
+1. Analyze user intent (e.g., "sub sy door planet dikhao" -> farthest planet -> neptune).
+2. Respond ONLY with a single JSON object in this exact format: {"planetId": "neptune"}
+3. If no celestial body matches, respond with: {"planetId": "none"}`;
 
     const response = await fetch(WORKER_URL, {
       method: "POST",
@@ -205,15 +263,29 @@ export const parseNaturalLanguageSearch = async (
       body: JSON.stringify({
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: query },
+          { role: "user", content: `User search query: "${query}"` },
         ],
-        max_tokens: 30,
+        max_tokens: 60,
         temperature: 0.1,
       }),
     });
 
     if (response.ok) {
       const data = await response.json();
+
+      // Case A: Cloudflare Workers AI auto-parsed JSON object response
+      if (
+        data.response &&
+        typeof data.response === "object" &&
+        data.response.planetId
+      ) {
+        const pId = String(data.response.planetId).toLowerCase().trim();
+        if (ALL_CELESTIAL_BODIES.some((b) => b.id === pId)) {
+          return pId;
+        }
+      }
+
+      // Case B: Extract string from response or choices
       let rawText = "";
       if (typeof data.response === "string") {
         rawText = data.response;
@@ -222,13 +294,24 @@ export const parseNaturalLanguageSearch = async (
       } else if (data.choices?.[0]?.text) {
         rawText = data.choices[0].text;
       }
-      const result = rawText.trim().toLowerCase().replace(/[^a-z]/g, "");
-      if (ALL_CELESTIAL_BODIES.some((b) => b.id === result)) {
-        return result;
+
+      if (rawText) {
+        const lower = rawText.toLowerCase();
+        // Check JSON string pattern first
+        const matchJson = lower.match(/"planetid"\s*:\s*"([a-z]+)"/);
+        if (matchJson && matchJson[1] && ALL_CELESTIAL_BODIES.some((b) => b.id === matchJson[1])) {
+          return matchJson[1];
+        }
+
+        // Check if any celestial body ID is contained in the AI output text
+        const matched = ALL_CELESTIAL_BODIES.find((b) => lower.includes(b.id));
+        if (matched) {
+          return matched.id;
+        }
       }
     }
   } catch (e) {
-    console.warn("AI search parse fallback used", e);
+    console.warn("AI search parse fallback used:", e);
   }
 
   return null;
