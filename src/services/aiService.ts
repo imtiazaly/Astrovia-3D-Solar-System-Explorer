@@ -1,41 +1,21 @@
-import { GoogleGenAI } from "@google/genai";
 import type { PlanetData, QuizQuestion } from "../types/solar";
 import { ALL_CELESTIAL_BODIES } from "../data/planetsData";
 
-// Storage key for user-provided Gemini API Key
-const API_KEY_STORAGE_KEY = "astrovia_gemini_api_key";
+// Cloudflare Worker AI Hub Endpoint
+const WORKER_URL = "https://ai-hub.imtiyazalye.workers.dev/api/chat";
 
 export interface AiStatusInfo {
   available: boolean;
-  source: "user" | "env" | "none";
-  key: string;
+  source: "worker";
+  endpoint: string;
 }
 
-// Helper to get active API key & status
-export const getStoredApiKey = (): string => {
-  return (
-    localStorage.getItem(API_KEY_STORAGE_KEY) ||
-    import.meta.env.VITE_GEMINI_API_KEY ||
-    ""
-  ).trim();
-};
-
 export const getAiStatus = (): AiStatusInfo => {
-  const userKey = (localStorage.getItem(API_KEY_STORAGE_KEY) || "").trim();
-  const envKey = (import.meta.env.VITE_GEMINI_API_KEY || "").trim();
-
-  if (userKey) {
-    return { available: true, source: "user", key: userKey };
-  }
-  if (envKey) {
-    return { available: true, source: "env", key: envKey };
-  }
-  return { available: false, source: "none", key: "" };
-};
-
-// Helper to save user API key
-export const setStoredApiKey = (key: string): void => {
-  localStorage.setItem(API_KEY_STORAGE_KEY, key.trim());
+  return {
+    available: true,
+    source: "worker",
+    endpoint: WORKER_URL,
+  };
 };
 
 // Helper to construct RAG Context from NASA ground-truth dataset
@@ -61,61 +41,52 @@ Fun Facts: ${p.funFacts.join(" | ")}
 };
 
 /**
- * 1. AstroAI Conversational Guide (RAG Chat)
- * Returns true AI response or throws an error (NO fake/simulated fallbacks).
+ * 1. AstroAI Conversational Guide (Cloudflare Workers AI RAG Chat)
  */
 export const askAstroAI = async (
   userPrompt: string,
   selectedPlanet?: PlanetData,
 ): Promise<string> => {
-  const apiKey = getStoredApiKey();
+  const datasetContext = getDatasetContext();
+  const planetContext = selectedPlanet
+    ? `The user is currently inspecting ${selectedPlanet.name}. Focus response on ${selectedPlanet.name} if relevant.`
+    : "No specific planet selected.";
 
-  // If no API Key configured, throw explicit missing key error
-  if (!apiKey) {
-    throw new Error(
-      "API_KEY_MISSING: No Gemini API Key configured. Please add VITE_GEMINI_API_KEY in .env or configure your API key in Settings ⚙️.",
-    );
-  }
-
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    const datasetContext = getDatasetContext();
-    const planetContext = selectedPlanet
-      ? `The user is currently inspecting ${selectedPlanet.name}. Focus response on ${selectedPlanet.name} if relevant.`
-      : "No specific planet selected.";
-
-    const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astronomy AI assistant guiding users through 3D Solar System Explorer (Astrovia).
+  const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astronomy AI assistant guiding users through 3D Solar System Explorer (Astrovia).
 Use the following verified NASA dataset as your primary ground truth for numbers and facts:
 ${datasetContext}
 
 User Context: ${planetContext}
 Keep answers engaging, educational, concise (2-4 paragraphs max), and well-formatted with markdown emojis.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${systemPrompt}\n\nUser Question: ${userPrompt}` }],
-        },
-      ],
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: `${systemPrompt}\n\nUser Question: ${userPrompt}`,
+      }),
     });
 
-    if (!response.text) {
-      throw new Error("EMPTY_RESPONSE: Received empty text response from Gemini API.");
+    if (!response.ok) {
+      throw new Error(`Cloudflare Worker HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return response.text;
-  } catch (error: unknown) {
-    console.error("Gemini API Request Error:", error);
-    const errMessage = error instanceof Error ? error.message : String(error);
-    
-    if (errMessage.includes("API_KEY_MISSING")) {
-      throw error;
+    const data = await response.json();
+    const resultText = data.response || data.choices?.[0]?.text || data.text || "";
+
+    if (!resultText) {
+      throw new Error("Received empty text response from Cloudflare Worker AI.");
     }
-    
+
+    return resultText;
+  } catch (error: unknown) {
+    console.error("Cloudflare Worker AI Request Error:", error);
+    const errMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `GEMINI_API_ERROR: ${errMessage || "Failed to communicate with Google Gemini AI API."}`
+      `AI_WORKER_ERROR: ${errMessage || "Failed to communicate with Cloudflare Worker AI API."}`
     );
   }
 };
@@ -197,23 +168,24 @@ export const parseNaturalLanguageSearch = async (
   )
     return "sun";
 
-  const apiKey = getStoredApiKey();
-  if (!apiKey) return null;
-
   try {
-    const ai = new GoogleGenAI({ apiKey });
     const prompt = `Identify which planet or star in our solar system matches this user query: "${query}".
 Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto.
 Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: prompt }),
     });
 
-    const result = response.text?.trim().toLowerCase() || "";
-    if (ALL_CELESTIAL_BODIES.some((b) => b.id === result)) {
-      return result;
+    if (response.ok) {
+      const data = await response.json();
+      const rawText = (data.response || data.choices?.[0]?.text || "").trim().toLowerCase();
+      const result = rawText.replace(/[^a-z]/g, "");
+      if (ALL_CELESTIAL_BODIES.some((b) => b.id === result)) {
+        return result;
+      }
     }
   } catch (e) {
     console.warn("AI search parse fallback used", e);
@@ -228,14 +200,7 @@ Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, r
 export const generatePlanetQuiz = async (
   planet: PlanetData,
 ): Promise<QuizQuestion[]> => {
-  const apiKey = getStoredApiKey();
-
-  if (!apiKey) {
-    return getOfflineQuiz(planet);
-  }
-
   try {
-    const ai = new GoogleGenAI({ apiKey });
     const prompt = `Generate 3 multiple choice quiz questions about ${planet.name} based on real astrophysics facts.
 Respond ONLY with valid JSON in this exact structure:
 [
@@ -244,27 +209,34 @@ Respond ONLY with valid JSON in this exact structure:
     "planetId": "${planet.id}",
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctAnswerIndex": index of the correct option (0-3),
+    "correctAnswerIndex": 0,
     "explanation": "Brief explanation why."
   }
 ]`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: prompt }),
     });
 
-    const text = response.text || "";
-    const cleanJson = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-    const questions: QuizQuestion[] = JSON.parse(cleanJson);
-    return questions;
+    if (response.ok) {
+      const data = await response.json();
+      const text = data.response || data.choices?.[0]?.text || "";
+      const cleanJson = text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+      const questions: QuizQuestion[] = JSON.parse(cleanJson);
+      if (Array.isArray(questions) && questions.length > 0) {
+        return questions;
+      }
+    }
   } catch (e) {
-    console.warn("Gemini Quiz API parse failed, using offline astrophysics dataset:", e);
-    return getOfflineQuiz(planet);
+    console.warn("Cloudflare Worker AI Quiz parse failed, using offline astrophysics dataset:", e);
   }
+
+  return getOfflineQuiz(planet);
 };
 
 // Standard Offline Astrophysics Quiz Dataset (Used when AI is offline)

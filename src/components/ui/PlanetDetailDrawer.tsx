@@ -70,7 +70,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiInsight(
-        `⚠️ **AI Intel Unavailable**\n\n${msg}\n\n*Note: Simulated default responses have been disabled. Please set VITE_GEMINI_API_KEY in .env or configure your Gemini API key in Settings ⚙️.*`,
+        `⚠️ **AI Intel Unavailable**\n\n${msg}\n\n*Unable to connect to Cloudflare Worker AI Hub. Please check your connection or try again later.*`,
       );
     } finally {
       setLoadingAi(false);

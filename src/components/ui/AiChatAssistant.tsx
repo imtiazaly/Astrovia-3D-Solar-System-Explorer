@@ -50,9 +50,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
           {
             id: "welcome-1",
             sender: "ai",
-            text: `Greetings Commander! 🚀 I am **AstroAI**, your real-time astrophysics guide powered by Google Gemini 3.6 Flash.\n\n🟢 **System Status**: Connected (${
-              status.source === "env" ? "Production .env API Key" : "User Custom Key"
-            })\n\nAsk me anything regarding planetary science, orbital mechanics, solar dynamics, or deep space exploration!`,
+            text: `Greetings Commander! 🚀 I am **AstroAI**, your real-time astrophysics guide powered by Cloudflare Workers AI (**Llama 3.2 3B Instruct**).\n\n🟢 **System Status**: Connected via AI-Hub Worker\n\nAsk me anything regarding planetary science, orbital mechanics, solar dynamics, or deep space exploration!`,
             timestamp: new Date().toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -117,7 +115,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
       const errorMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         sender: "ai",
-        text: `⚠️ **AstroAI Error Notice**\n\n${errorMessage}\n\n*Note: Simulated default responses have been disabled as requested. Please connect a valid Gemini API Key in Settings ⚙️ to resume live AI responses.*`,
+        text: `⚠️ **AstroAI Error Notice**\n\n${errorMessage}\n\n*Unable to connect to Cloudflare Worker AI Hub. Please verify your connection.*`,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -132,14 +130,11 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
 
   const handleClearHistory = () => {
     soundEngine.playClick();
-    const status = getAiStatus();
     setMessages([
       {
         id: Date.now().toString(),
         sender: "ai",
-        text: `Terminal reset. Ready for new space mission inquiries! 🌌\n\n🟢 Status: ${
-          status.available ? "AI Active" : "AI Paused (Key Missing)"
-        }`,
+        text: `Terminal reset. Ready for new space mission inquiries! 🌌\n\n🟢 Status: Cloudflare Worker AI Active`,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -329,12 +324,12 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
                 AstroAI Guide
               </h3>
               <span className="text-[9px] font-mono-hud px-1.5 py-0.5 bg-purple-950/80 text-purple-300 rounded-md border border-purple-600/50">
-                GEMINI 3.6 FLASH
+                LLAMA 3.2 3B
               </span>
             </div>
             <p className="text-[10px] text-purple-300/70 font-mono-hud flex items-center gap-1">
               <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
-              Live Astrophysics AI Copilot ({aiStatus.source === "env" ? ".env Active" : "Custom Key Active"})
+              Cloudflare Worker AI Copilot
             </p>
           </div>
         </div>
@@ -436,7 +431,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
           <div className="flex items-center gap-3 p-3 bg-purple-950/30 rounded-2xl border border-purple-500/30 text-xs text-purple-300 font-mono-hud">
             <Sparkles className="w-4 h-4 animate-spin text-purple-400" />
             <div className="flex items-center gap-1">
-              <span>AstroAI is querying Gemini Astrophysics Engine</span>
+              <span>AstroAI is querying Cloudflare Workers AI Engine</span>
               <span className="animate-pulse">...</span>
             </div>
           </div>
