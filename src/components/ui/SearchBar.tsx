@@ -101,7 +101,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectPlanet }) => {
         <button
           onClick={handleAiSearch}
           disabled={isAiSearching}
-          title="Search with Gemini AI Natural Language Intent Parser"
+          title="Search with Cloudflare Worker AI Natural Language Intent Parser"
           className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white rounded-xl text-[10px] font-bold flex items-center gap-1.5 shadow-md shadow-cyan-500/30 disabled:opacity-50 transition-all border border-cyan-300/30 active:scale-95 cursor-pointer"
         >
           <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />

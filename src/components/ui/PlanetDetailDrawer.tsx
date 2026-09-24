@@ -70,7 +70,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiInsight(
-        `⚠️ **AI Intel Unavailable**\n\n${msg}\n\n*Note: Simulated default responses have been disabled. Please set VITE_GEMINI_API_KEY in .env or configure your Gemini API key in Settings ⚙️.*`,
+        `⚠️ **AI Intel Unavailable**\n\n${msg}\n\n*Unable to connect to Cloudflare Worker AI Hub. Please check your connection or try again later.*`,
       );
     } finally {
       setLoadingAi(false);
@@ -78,7 +78,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
   };
 
   return (
-    <div className="fixed right-2 sm:right-6 top-16 sm:top-20 bottom-16 sm:bottom-24 z-30 w-[calc(100vw-16px)] sm:w-96 md:w-[420px] hud-glass rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all animate-in slide-in-from-right-6 duration-300 select-none">
+    <div className="fixed right-2 sm:right-6 top-16 sm:top-20 bottom-16 sm:bottom-24 z-30 w-[calc(100vw-16px)] sm:w-96 md:w-105 hud-glass rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all animate-in slide-in-from-right-6 duration-300 select-none">
       {/* Drawer Header */}
       <div className="flex items-start justify-between pb-3.5 border-b border-cyan-500/25">
         <div className="flex items-center gap-3">
@@ -365,7 +365,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
               <div className="p-8 text-center text-purple-300 space-y-3 bg-purple-950/20 rounded-2xl border border-purple-500/30">
                 <Sparkles className="w-8 h-8 animate-spin mx-auto text-purple-400" />
                 <p className="text-xs font-mono-hud font-bold">
-                  Consulting Google Gemini Deep Astronomy Engine...
+                  Consulting AstroAI Astrophysics Engine...
                 </p>
                 <div className="w-32 h-1 bg-purple-900 mx-auto rounded-full overflow-hidden">
                   <div className="w-full h-full bg-purple-400 animate-pulse" />
@@ -375,7 +375,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
               <div className="p-4 bg-purple-950/30 border border-purple-500/40 rounded-2xl space-y-2.5 shadow-lg shadow-purple-500/10">
                 <div className="flex items-center gap-2 text-purple-300 font-bold font-mono-hud text-xs">
                   <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-                  <span>Gemini Astrophysics Intelligence</span>
+                  <span>AstroAI Astrophysics Intelligence</span>
                 </div>
                 <p className="text-slate-200 leading-relaxed whitespace-pre-line text-xs">
                   {aiInsight}

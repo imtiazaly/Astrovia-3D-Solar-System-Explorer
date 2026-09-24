@@ -1,41 +1,21 @@
-import { GoogleGenAI } from "@google/genai";
 import type { PlanetData, QuizQuestion } from "../types/solar";
 import { ALL_CELESTIAL_BODIES } from "../data/planetsData";
 
-// Storage key for user-provided Gemini API Key
-const API_KEY_STORAGE_KEY = "astrovia_gemini_api_key";
+// Cloudflare Worker AI Hub Endpoint
+const WORKER_URL = "https://ai-hub.imtiyazalye.workers.dev/api/chat";
 
 export interface AiStatusInfo {
   available: boolean;
-  source: "user" | "env" | "none";
-  key: string;
+  source: "worker";
+  endpoint: string;
 }
 
-// Helper to get active API key & status
-export const getStoredApiKey = (): string => {
-  return (
-    localStorage.getItem(API_KEY_STORAGE_KEY) ||
-    import.meta.env.VITE_GEMINI_API_KEY ||
-    ""
-  ).trim();
-};
-
 export const getAiStatus = (): AiStatusInfo => {
-  const userKey = (localStorage.getItem(API_KEY_STORAGE_KEY) || "").trim();
-  const envKey = (import.meta.env.VITE_GEMINI_API_KEY || "").trim();
-
-  if (userKey) {
-    return { available: true, source: "user", key: userKey };
-  }
-  if (envKey) {
-    return { available: true, source: "env", key: envKey };
-  }
-  return { available: false, source: "none", key: "" };
-};
-
-// Helper to save user API key
-export const setStoredApiKey = (key: string): void => {
-  localStorage.setItem(API_KEY_STORAGE_KEY, key.trim());
+  return {
+    available: true,
+    source: "worker",
+    endpoint: WORKER_URL,
+  };
 };
 
 // Helper to construct RAG Context from NASA ground-truth dataset
@@ -61,61 +41,80 @@ Fun Facts: ${p.funFacts.join(" | ")}
 };
 
 /**
- * 1. AstroAI Conversational Guide (RAG Chat)
- * Returns true AI response or throws an error (NO fake/simulated fallbacks).
+ * 1. AstroAI Conversational Guide (Cloudflare Workers AI RAG Chat)
  */
 export const askAstroAI = async (
   userPrompt: string,
   selectedPlanet?: PlanetData,
 ): Promise<string> => {
-  const apiKey = getStoredApiKey();
+  const datasetContext = getDatasetContext();
+  const planetContext = selectedPlanet
+    ? `The user is currently inspecting ${selectedPlanet.name}. Focus response on ${selectedPlanet.name} if relevant.`
+    : "No specific planet selected.";
 
-  // If no API Key configured, throw explicit missing key error
-  if (!apiKey) {
-    throw new Error(
-      "API_KEY_MISSING: No Gemini API Key configured. Please add VITE_GEMINI_API_KEY in .env or configure your API key in Settings ⚙️.",
-    );
-  }
+  const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astrophysics AI assistant guiding users through Astrovia (3D Solar System Explorer).
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    const datasetContext = getDatasetContext();
-    const planetContext = selectedPlanet
-      ? `The user is currently inspecting ${selectedPlanet.name}. Focus response on ${selectedPlanet.name} if relevant.`
-      : "No specific planet selected.";
+CRITICAL ACCURACY & BEHAVIOR RULES:
+1. Use the verified NASA ground-truth dataset below as your strict reference.
+2. Saturn has 146 moons and holds the record for MOST MOONS in the Solar System. Jupiter has 95 moons. NEVER state Jupiter has the most moons.
+3. Mercury temperatures range from 427°C (day) to -173°C (night). Venus is the hottest planet at 464°C.
+4. Answer the user directly and concisely (2-3 paragraphs max). Use engaging markdown formatting and emojis.
+5. STRICT SINGLE TURN: You are ONLY providing the answer. NEVER simulate user questions, NEVER append extra "User Question:" lines, and NEVER generate fake dialogue turns.
 
-    const systemPrompt = `You are AstroAI, an expert, enthusiastic, and scientifically accurate astronomy AI assistant guiding users through 3D Solar System Explorer (Astrovia).
-Use the following verified NASA dataset as your primary ground truth for numbers and facts:
+NASA Ground-Truth Dataset:
 ${datasetContext}
 
-User Context: ${planetContext}
-Keep answers engaging, educational, concise (2-4 paragraphs max), and well-formatted with markdown emojis.`;
+User Context: ${planetContext}`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${systemPrompt}\n\nUser Question: ${userPrompt}` }],
-        },
-      ],
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 1024,
+        temperature: 0.3,
+      }),
     });
 
-    if (!response.text) {
-      throw new Error("EMPTY_RESPONSE: Received empty text response from Gemini API.");
+    if (!response.ok) {
+      throw new Error(`Cloudflare Worker HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return response.text;
-  } catch (error: unknown) {
-    console.error("Gemini API Request Error:", error);
-    const errMessage = error instanceof Error ? error.message : String(error);
-    
-    if (errMessage.includes("API_KEY_MISSING")) {
-      throw error;
+    const data = await response.json();
+    let resultText = "";
+
+    if (typeof data.response === "string") {
+      resultText = data.response;
+    } else if (data.choices?.[0]?.message?.content) {
+      resultText = data.choices[0].message.content;
+    } else if (data.choices?.[0]?.text) {
+      resultText = data.choices[0].text;
+    } else if (data.response) {
+      resultText = typeof data.response === "object" ? JSON.stringify(data.response) : String(data.response);
     }
-    
+
+    // Clean up any stray turn markers or fake dialogue artifacts
+    resultText = resultText
+      .replace(/^AstroAI:\s*/i, "")
+      .replace(/User Question:[\s\S]*/i, "")
+      .trim();
+
+    if (!resultText) {
+      throw new Error("Received empty text response from Cloudflare Worker AI.");
+    }
+
+    return resultText;
+  } catch (error: unknown) {
+    console.error("Cloudflare Worker AI Request Error:", error);
+    const errMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `GEMINI_API_ERROR: ${errMessage || "Failed to communicate with Google Gemini AI API."}`
+      `AI_WORKER_ERROR: ${errMessage || "Failed to communicate with Cloudflare Worker AI API."}`
     );
   }
 };
@@ -128,95 +127,191 @@ export const parseNaturalLanguageSearch = async (
 ): Promise<string | null> => {
   const q = query.toLowerCase().trim();
 
-  // Fast client-side keyword matching
+  // 1. Extended Multilingual (English, Roman Urdu, Hindi) Fast Heuristics
+  if (
+    q.includes("door") ||
+    q.includes("dur") ||
+    q.includes("farthest") ||
+    q.includes("furthest") ||
+    q.includes("aakhri") ||
+    q.includes("akhri") ||
+    q.includes("distant")
+  )
+    return "neptune";
+
+  if (
+    q.includes("garm") ||
+    q.includes("garam") ||
+    q.includes("hottest") ||
+    q.includes("tapti") ||
+    q.includes("toxic") ||
+    q.includes("morning star")
+  )
+    return "venus";
+
+  if (
+    q.includes("bara") ||
+    q.includes("bada") ||
+    q.includes("largest") ||
+    q.includes("biggest") ||
+    q.includes("azeem") ||
+    q.includes("great red spot")
+  )
+    return "jupiter";
+
   if (
     q.includes("red") ||
+    q.includes("surkh") ||
+    q.includes("laal") ||
+    q.includes("lal") ||
     q.includes("mars") ||
     q.includes("rusty") ||
     q.includes("olympus")
   )
     return "mars";
-  if (
-    q.includes("hot") ||
-    q.includes("toxic") ||
-    q.includes("venus") ||
-    q.includes("morning star")
-  )
-    return "venus";
+
   if (
     q.includes("ring") ||
+    q.includes("chhalle") ||
+    q.includes("chala") ||
     q.includes("saturn") ||
-    q.includes("jewel") ||
     q.includes("titan")
   )
     return "saturn";
+
   if (
-    q.includes("giant") ||
-    q.includes("largest") ||
-    q.includes("biggest") ||
-    q.includes("jupiter") ||
-    q.includes("red spot")
-  )
-    return "jupiter";
-  if (
-    q.includes("blue") ||
-    q.includes("water") ||
-    q.includes("earth") ||
-    q.includes("home") ||
-    q.includes("life")
-  )
-    return "earth";
-  if (
+    q.includes("qareeb") ||
+    q.includes("kareeb") ||
     q.includes("closest") ||
-    q.includes("swift") ||
+    q.includes("pehla") ||
     q.includes("mercury") ||
-    q.includes("smallest planet")
+    q.includes("smallest")
   )
     return "mercury";
+
   if (
+    q.includes("thanda") ||
+    q.includes("coldest") ||
     q.includes("sideways") ||
     q.includes("tilt") ||
     q.includes("uranus") ||
     q.includes("cyan")
   )
     return "uranus";
+
   if (
-    q.includes("wind") ||
-    q.includes("dark blue") ||
-    q.includes("neptune") ||
-    q.includes("triton")
+    q.includes("blue") ||
+    q.includes("water") ||
+    q.includes("earth") ||
+    q.includes("home") ||
+    q.includes("life") ||
+    q.includes("habitable") ||
+    q.includes("zameen") ||
+    q.includes("dharti")
   )
-    return "neptune";
-  if (q.includes("dwarf") || q.includes("pluto") || q.includes("kuiper"))
+    return "earth";
+
+  if (
+    q.includes("dwarf") ||
+    q.includes("pluto") ||
+    q.includes("kuiper") ||
+    q.includes("chhota")
+  )
     return "pluto";
+
   if (
     q.includes("star") ||
     q.includes("sun") ||
+    q.includes("suraj") ||
+    q.includes("sooraj") ||
     q.includes("center") ||
     q.includes("light")
   )
     return "sun";
 
-  const apiKey = getStoredApiKey();
-  if (!apiKey) return null;
+  // Check direct name match
+  const directMatch = ALL_CELESTIAL_BODIES.find(
+    (b) => q.includes(b.id) || q.includes(b.name.toLowerCase()),
+  );
+  if (directMatch) return directMatch.id;
 
+  // 2. Multilingual RAG AI Intent Classifier via Cloudflare Worker AI
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const prompt = `Identify which planet or star in our solar system matches this user query: "${query}".
-Options: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto.
-Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, respond with "none".`;
+    const systemPrompt = `You are AstroAI Search Intent Classifier for 3D Solar System Explorer (Astrovia).
+Your task is to understand natural language search queries in ANY language (English, Roman Urdu, Urdu, Hindi, Spanish, etc.) and map complex sentences to the single best matching celestial body ID.
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+Multilingual & Astrophysics Knowledge Base:
+- "sun": Central star, suraj, light, center of solar system.
+- "mercury": Closest planet to Sun, smallest, pehla planet, pehla kawkab, sab se qareeb.
+- "venus": Hottest planet (464°C), morning star, sab se garm, sab se garam planet.
+- "earth": Life, oceans, home, zameen, dharti, humara kawkab.
+- "mars": Red planet, rusty, Olympus Mons, surkh sayara, laal planet, laal sayara.
+- "jupiter": Largest planet, gas giant, Great Red Spot, sab se bara planet, sab se bada planet, sab se azeem.
+- "saturn": Ringed planet, 146 moons, chhalle wala planet, chhalle wala sayara.
+- "uranus": Coldest planet, tilted sideways, ice giant, cyan, sab se thanda planet.
+- "neptune": Farthest major planet, windiest, dark blue, sab se door planet, sab se dur planet, aakhri planet.
+- "pluto": Dwarf planet, Kuiper belt, farthest dwarf, chhota planet.
+
+Instructions:
+1. Analyze user intent (e.g., "sub sy door planet dikhao" -> farthest planet -> neptune).
+2. Respond ONLY with a single JSON object in this exact format: {"planetId": "neptune"}
+3. If no celestial body matches, respond with: {"planetId": "none"}`;
+
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `User search query: "${query}"` },
+        ],
+        max_tokens: 60,
+        temperature: 0.1,
+      }),
     });
 
-    const result = response.text?.trim().toLowerCase() || "";
-    if (ALL_CELESTIAL_BODIES.some((b) => b.id === result)) {
-      return result;
+    if (response.ok) {
+      const data = await response.json();
+
+      // Case A: Cloudflare Workers AI auto-parsed JSON object response
+      if (
+        data.response &&
+        typeof data.response === "object" &&
+        data.response.planetId
+      ) {
+        const pId = String(data.response.planetId).toLowerCase().trim();
+        if (ALL_CELESTIAL_BODIES.some((b) => b.id === pId)) {
+          return pId;
+        }
+      }
+
+      // Case B: Extract string from response or choices
+      let rawText = "";
+      if (typeof data.response === "string") {
+        rawText = data.response;
+      } else if (data.choices?.[0]?.message?.content) {
+        rawText = data.choices[0].message.content;
+      } else if (data.choices?.[0]?.text) {
+        rawText = data.choices[0].text;
+      }
+
+      if (rawText) {
+        const lower = rawText.toLowerCase();
+        // Check JSON string pattern first
+        const matchJson = lower.match(/"planetid"\s*:\s*"([a-z]+)"/);
+        if (matchJson && matchJson[1] && ALL_CELESTIAL_BODIES.some((b) => b.id === matchJson[1])) {
+          return matchJson[1];
+        }
+
+        // Check if any celestial body ID is contained in the AI output text
+        const matched = ALL_CELESTIAL_BODIES.find((b) => lower.includes(b.id));
+        if (matched) {
+          return matched.id;
+        }
+      }
     }
   } catch (e) {
-    console.warn("AI search parse fallback used", e);
+    console.warn("AI search parse fallback used:", e);
   }
 
   return null;
@@ -228,43 +323,80 @@ Respond ONLY with the single lowercase ID string (e.g., "mars"). If unmatched, r
 export const generatePlanetQuiz = async (
   planet: PlanetData,
 ): Promise<QuizQuestion[]> => {
-  const apiKey = getStoredApiKey();
-
-  if (!apiKey) {
-    return getOfflineQuiz(planet);
-  }
-
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const prompt = `Generate 3 multiple choice quiz questions about ${planet.name} based on real astrophysics facts.
-Respond ONLY with valid JSON in this exact structure:
+    const systemPrompt = `You are an astrophysics quiz generator for Astrovia. Generate 3 multiple choice quiz questions about ${planet.name} based on verified astrophysics facts.
+
+STRICT JSON OUTPUT REQUIREMENTS:
+1. Respond ONLY with a valid JSON array of 3 objects.
+2. Do NOT include markdown formatting (\`\`\`json), intro text, or extra characters.
+3. Keep explanation text under 15 words per question to keep JSON compact.
+
+Exact JSON Structure:
 [
   {
     "id": "q1",
     "planetId": "${planet.id}",
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctAnswerIndex": index of the correct option (0-3),
-    "explanation": "Brief explanation why."
+    "correctAnswerIndex": 0,
+    "explanation": "Short 1-sentence explanation."
   }
 ]`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `Generate 3 quiz questions for ${planet.name}` },
+        ],
+        max_tokens: 1536,
+        temperature: 0.2,
+      }),
     });
 
-    const text = response.text || "";
-    const cleanJson = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-    const questions: QuizQuestion[] = JSON.parse(cleanJson);
-    return questions;
+    if (response.ok) {
+      const data = await response.json();
+
+      // Case 1: Cloudflare Workers AI already parsed response into a JavaScript Array of Objects!
+      if (Array.isArray(data.response) && data.response.length > 0) {
+        return data.response as QuizQuestion[];
+      }
+
+      // Case 2: Extract string from response or choices message content
+      let text = "";
+      if (typeof data.response === "string") {
+        text = data.response;
+      } else if (data.choices?.[0]?.message?.content) {
+        text = data.choices[0].message.content;
+      } else if (data.choices?.[0]?.text) {
+        text = data.choices[0].text;
+      }
+
+      if (text) {
+        // Remove markdown code blocks if any
+        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+        // Extract JSON array between first '[' and last ']'
+        const startIdx = text.indexOf("[");
+        const endIdx = text.lastIndexOf("]");
+        
+        if (startIdx !== -1 && endIdx > startIdx) {
+          text = text.substring(startIdx, endIdx + 1);
+        }
+
+        const questions: QuizQuestion[] = JSON.parse(text);
+        if (Array.isArray(questions) && questions.length > 0) {
+          return questions;
+        }
+      }
+    }
   } catch (e) {
-    console.warn("Gemini Quiz API parse failed, using offline astrophysics dataset:", e);
-    return getOfflineQuiz(planet);
+    console.warn("Cloudflare Worker AI Quiz parse failed, using offline astrophysics dataset:", e);
   }
+
+  return getOfflineQuiz(planet);
 };
 
 // Standard Offline Astrophysics Quiz Dataset (Used when AI is offline)

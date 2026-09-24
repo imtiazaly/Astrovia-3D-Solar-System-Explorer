@@ -101,7 +101,7 @@ export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
                     onClick={() => handleSelectOnMobile(planet)}
                     className={`w-full px-3 py-2.5 rounded-2xl flex items-center justify-between text-left text-xs transition-all border cursor-pointer active:scale-98 ${
                       isSelected
-                        ? "bg-gradient-to-r from-cyan-950/90 to-blue-950/80 border-cyan-400 text-cyan-100 shadow-md shadow-cyan-500/20"
+                        ? "bg-linear-to-r from-cyan-950/90 to-blue-950/80 border-cyan-400 text-cyan-100 shadow-md shadow-cyan-500/20"
                         : "bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/80 text-slate-300"
                     }`}
                   >
@@ -130,7 +130,9 @@ export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
 
                     <div className="text-right">
                       <div className="text-[10px] text-cyan-400/80 font-mono-hud font-semibold">
-                        {planet.type === "star" ? "Origin" : `${planet.distanceFromSunAU} AU`}
+                        {planet.type === "star"
+                          ? "Origin"
+                          : `${planet.distanceFromSunAU} AU`}
                       </div>
                     </div>
                   </button>
@@ -235,7 +237,7 @@ export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
                 }}
                 className={`w-full px-3 py-2 rounded-2xl flex items-center justify-between text-left text-xs transition-all border group cursor-pointer ${
                   isSelected
-                    ? "bg-gradient-to-r from-cyan-950/80 to-blue-950/60 border-cyan-400 text-cyan-100 shadow-lg shadow-cyan-500/15"
+                    ? "bg-linear-to-r from-cyan-950/80 to-blue-950/60 border-cyan-400 text-cyan-100 shadow-lg shadow-cyan-500/15"
                     : "bg-slate-900/40 border-slate-800/50 hover:bg-slate-800/60 hover:border-cyan-500/30 text-slate-300"
                 }`}
               >
@@ -271,7 +273,9 @@ export const PlanetSidebar: React.FC<PlanetSidebarProps> = ({
 
                 <div className="text-right">
                   <div className="text-[10px] text-cyan-400/80 font-mono-hud font-semibold">
-                    {planet.type === "star" ? "Origin" : `${planet.distanceFromSunAU} AU`}
+                    {planet.type === "star"
+                      ? "Origin"
+                      : `${planet.distanceFromSunAU} AU`}
                   </div>
                   {isSelected && (
                     <Target className="w-3 h-3 text-cyan-400 ml-auto animate-pulse" />

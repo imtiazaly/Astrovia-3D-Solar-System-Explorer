@@ -107,7 +107,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
                 {planet.name} Celestial Trivia
               </h3>
               <span className="text-[9px] font-mono-hud px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-600/40">
-                GEMINI AI
+                ASTRO AI
               </span>
             </div>
             <p className="text-[10px] text-purple-300/70 font-mono-hud uppercase">
@@ -143,7 +143,7 @@ export const AiQuizModal: React.FC<AiQuizModalProps> = ({
                 Synthesizing Dynamic Planetary Trivia
               </h4>
               <p className="text-xs font-mono-hud text-purple-400/80">
-                Gemini is examining {planet.name}&apos;s real astrophysics
+                AstroAI is examining {planet.name}&apos;s real astrophysics
                 data...
               </p>
             </div>
