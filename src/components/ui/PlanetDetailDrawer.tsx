@@ -78,7 +78,7 @@ export const PlanetDetailDrawer: React.FC<PlanetDetailDrawerProps> = ({
   };
 
   return (
-    <div className="fixed right-2 sm:right-6 top-16 sm:top-20 bottom-16 sm:bottom-24 z-30 w-[calc(100vw-16px)] sm:w-96 md:w-[420px] hud-glass rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all animate-in slide-in-from-right-6 duration-300 select-none">
+    <div className="fixed right-2 sm:right-6 top-16 sm:top-20 bottom-16 sm:bottom-24 z-30 w-[calc(100vw-16px)] sm:w-96 md:w-105 hud-glass rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/35 overflow-hidden transition-all animate-in slide-in-from-right-6 duration-300 select-none">
       {/* Drawer Header */}
       <div className="flex items-start justify-between pb-3.5 border-b border-cyan-500/25">
         <div className="flex items-center gap-3">

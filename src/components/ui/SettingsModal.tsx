@@ -60,7 +60,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-bold">Cloudflare Worker AI Hub Active</span>
           </div>
-          <span className="text-[10px] uppercase opacity-80 font-bold">ONLINE</span>
+          <span className="text-[10px] uppercase opacity-80 font-bold">
+            ONLINE
+          </span>
         </div>
 
         {/* Architecture Details Cards */}
@@ -70,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <Server className="w-3.5 h-3.5 text-cyan-400" />
               <span>Production Worker Endpoint</span>
             </div>
-            <p className="text-[11px] text-slate-300 font-mono bg-slate-900/90 p-2 rounded-xl border border-cyan-500/20 text-cyan-200 break-all select-all">
+            <p className="text-[11px] font-mono bg-slate-900/90 p-2 rounded-xl border border-cyan-500/20 text-cyan-200 break-all select-all">
               https://ai-hub.imtiyazalye.workers.dev/api/chat
             </p>
           </div>
@@ -81,7 +83,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <span>AI LLM Engine</span>
             </div>
             <p className="text-[11px] text-slate-300">
-              Powered by <strong className="text-purple-300 font-mono">@cf/meta/llama-3.2-3b-instruct</strong> on Cloudflare Workers AI infrastructure.
+              Powered by{" "}
+              <strong className="text-purple-300 font-mono">
+                @cf/meta/llama-3.2-3b-instruct
+              </strong>{" "}
+              on Cloudflare Workers AI infrastructure.
             </p>
           </div>
 
@@ -91,7 +97,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <span>Zero Configuration Needed</span>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Visitors do not need to configure API keys. Requests are routed securely from Astrovia directly through the AI-Hub Cloudflare Worker.
+              Visitors do not need to configure API keys. Requests are routed
+              securely from Astrovia directly through the AI-Hub Cloudflare
+              Worker.
             </p>
           </div>
 
@@ -100,7 +108,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <Globe className="w-3.5 h-3.5 text-amber-400" />
               <span>Allowed Production Origin</span>
             </div>
-            <p className="text-[11px] text-slate-300 font-mono bg-slate-900/90 p-2 rounded-xl border border-amber-500/20 text-amber-200">
+            <p className="text-[11px] font-mono bg-slate-900/90 p-2 rounded-xl border border-amber-500/20 text-amber-200">
               https://imtiazaly.github.io
             </p>
           </div>

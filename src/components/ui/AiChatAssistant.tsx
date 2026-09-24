@@ -156,7 +156,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
   // =========================================================================
   if (!aiStatus.available) {
     return (
-      <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 md:w-[480px] hud-glass-purple border-l border-rose-500/35 flex flex-col shadow-[0_0_60px_rgba(244,63,94,0.2)] select-none animate-in slide-in-from-right duration-300">
+      <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 md:w-120 hud-glass-purple border-l border-rose-500/35 flex flex-col shadow-[0_0_60px_rgba(244,63,94,0.2)] select-none animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="p-4 bg-slate-950/90 border-b border-rose-500/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -199,7 +199,8 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
               <span>Default Fallback Response Disabled</span>
             </div>
             <p className="text-xs leading-relaxed text-slate-300">
-              AstroAI does not use fake simulated text. The AI chat is connected directly to our Cloudflare Worker AI Hub.
+              AstroAI does not use fake simulated text. The AI chat is connected
+              directly to our Cloudflare Worker AI Hub.
             </p>
           </div>
 
@@ -216,7 +217,8 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
               https://ai-hub.imtiyazalye.workers.dev/api/chat
             </div>
             <p className="text-[10px] text-cyan-400/80">
-              ✨ <strong>Benefit:</strong> All visitors get seamless out-of-the-box AI access without needing any configuration!
+              ✨ <strong>Benefit:</strong> All visitors get seamless
+              out-of-the-box AI access without needing any configuration!
             </p>
           </div>
 
@@ -238,8 +240,13 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
                   Google AI Studio <ExternalLink className="w-2.5 h-2.5" />
                 </a>
               </li>
-              <li>Click <strong>"Configure API Key ⚙️"</strong> below.</li>
-              <li>Paste key and click Save. Credentials stay private in your browser.</li>
+              <li>
+                Click <strong>"Configure API Key ⚙️"</strong> below.
+              </li>
+              <li>
+                Paste key and click Save. Credentials stay private in your
+                browser.
+              </li>
             </ol>
           </div>
 
@@ -252,11 +259,15 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
             <ul className="space-y-1.5 text-[11px]">
               <li className="flex items-center gap-2">
                 <Sparkles className="w-3 h-3 text-cyan-400 shrink-0" />
-                <span>Ask live questions about planetary physics and solar dynamics</span>
+                <span>
+                  Ask live questions about planetary physics and solar dynamics
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <Layers className="w-3 h-3 text-purple-400 shrink-0" />
-                <span>Get real-time telemetry contextualized to selected planets</span>
+                <span>
+                  Get real-time telemetry contextualized to selected planets
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <HelpCircle className="w-3 h-3 text-amber-400 shrink-0" />
@@ -264,7 +275,9 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
               </li>
               <li className="flex items-center gap-2">
                 <Search className="w-3 h-3 text-emerald-400 shrink-0" />
-                <span>Search planets using natural language terms ("hottest planet")</span>
+                <span>
+                  Search planets using natural language terms ("hottest planet")
+                </span>
               </li>
             </ul>
           </div>
@@ -303,7 +316,7 @@ export const AiChatAssistant: React.FC<AiChatAssistantProps> = ({
   // RENDER: ACTIVE AI CHAT INTERFACE (When API key is available)
   // =========================================================================
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 md:w-[460px] hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 md:w-115 hud-glass-purple border-l border-purple-500/35 flex flex-col shadow-[0_0_60px_rgba(168,85,247,0.25)] select-none animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="p-4 bg-slate-950/80 border-b border-purple-500/25 flex items-center justify-between">
         <div className="flex items-center gap-3">
