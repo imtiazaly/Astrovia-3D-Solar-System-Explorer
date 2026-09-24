@@ -8,6 +8,8 @@
 
 A hyper-realistic, interactive 3D Solar System Explorer built with **React 19**, **Three.js / React Three Fiber**, **Tailwind CSS**, and an integrated **AI Microservices Copilot** powered by **Cloudflare Workers AI** (`@cf/meta/llama-3.2-3b-instruct`).
 
+> 🎓 **WebEra Solutions PK Internship Project**: Developed as **Task 1: 3D Solar System Explorer** during the 6-Week Frontend Development Internship program at [**WebEra Solutions PK**](https://weberasolutionspk.com/).
+
 ---
 
 ## 📸 Project Preview
