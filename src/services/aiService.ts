@@ -5,13 +5,32 @@ import { ALL_CELESTIAL_BODIES } from "../data/planetsData";
 // Storage key for user-provided Gemini API Key
 const API_KEY_STORAGE_KEY = "astrovia_gemini_api_key";
 
-// Helper to get active API key
+export interface AiStatusInfo {
+  available: boolean;
+  source: "user" | "env" | "none";
+  key: string;
+}
+
+// Helper to get active API key & status
 export const getStoredApiKey = (): string => {
   return (
     localStorage.getItem(API_KEY_STORAGE_KEY) ||
     import.meta.env.VITE_GEMINI_API_KEY ||
     ""
-  );
+  ).trim();
+};
+
+export const getAiStatus = (): AiStatusInfo => {
+  const userKey = (localStorage.getItem(API_KEY_STORAGE_KEY) || "").trim();
+  const envKey = (import.meta.env.VITE_GEMINI_API_KEY || "").trim();
+
+  if (userKey) {
+    return { available: true, source: "user", key: userKey };
+  }
+  if (envKey) {
+    return { available: true, source: "env", key: envKey };
+  }
+  return { available: false, source: "none", key: "" };
 };
 
 // Helper to save user API key
@@ -43,6 +62,7 @@ Fun Facts: ${p.funFacts.join(" | ")}
 
 /**
  * 1. AstroAI Conversational Guide (RAG Chat)
+ * Returns true AI response or throws an error (NO fake/simulated fallbacks).
  */
 export const askAstroAI = async (
   userPrompt: string,
@@ -50,9 +70,11 @@ export const askAstroAI = async (
 ): Promise<string> => {
   const apiKey = getStoredApiKey();
 
-  // If no API Key, use smart local fallback
+  // If no API Key configured, throw explicit missing key error
   if (!apiKey) {
-    return getFallbackChatResponse(userPrompt, selectedPlanet);
+    throw new Error(
+      "API_KEY_MISSING: No Gemini API Key configured. Please add VITE_GEMINI_API_KEY in .env or configure your API key in Settings ⚙️.",
+    );
   }
 
   try {
@@ -79,18 +101,27 @@ Keep answers engaging, educational, concise (2-4 paragraphs max), and well-forma
       ],
     });
 
-    return (
-      response.text || "I couldn't process that space query. Try asking again!"
+    if (!response.text) {
+      throw new Error("EMPTY_RESPONSE: Received empty text response from Gemini API.");
+    }
+
+    return response.text;
+  } catch (error: unknown) {
+    console.error("Gemini API Request Error:", error);
+    const errMessage = error instanceof Error ? error.message : String(error);
+    
+    if (errMessage.includes("API_KEY_MISSING")) {
+      throw error;
+    }
+    
+    throw new Error(
+      `GEMINI_API_ERROR: ${errMessage || "Failed to communicate with Google Gemini AI API."}`
     );
-  } catch (error) {
-    console.warn("Gemini API call failed, switching to local fallback:", error);
-    return getFallbackChatResponse(userPrompt, selectedPlanet);
   }
 };
 
 /**
  * 2. Natural Language Fuzzy Search Parser
- * Maps queries like "hottest planet", "red planet", "gas giant with rings" -> planet ID
  */
 export const parseNaturalLanguageSearch = async (
   query: string,
@@ -200,7 +231,7 @@ export const generatePlanetQuiz = async (
   const apiKey = getStoredApiKey();
 
   if (!apiKey) {
-    return getFallbackQuiz(planet);
+    return getOfflineQuiz(planet);
   }
 
   try {
@@ -231,30 +262,13 @@ Respond ONLY with valid JSON in this exact structure:
     const questions: QuizQuestion[] = JSON.parse(cleanJson);
     return questions;
   } catch (e) {
-    console.warn("Gemini Quiz parse failed, using fallback quiz:", e);
-    return getFallbackQuiz(planet);
+    console.warn("Gemini Quiz API parse failed, using offline astrophysics dataset:", e);
+    return getOfflineQuiz(planet);
   }
 };
 
-// Local Smart Fallbacks when API Key is missing or offline
-function getFallbackChatResponse(query: string, planet?: PlanetData): string {
-  const target =
-    planet ||
-    ALL_CELESTIAL_BODIES.find((p) =>
-      query.toLowerCase().includes(p.name.toLowerCase()),
-    ) ||
-    ALL_CELESTIAL_BODIES[3]; // Earth default
-  return `🌌 **AstroAI Insights for ${target.name}**:
-${target.description}
-
-- **Gravity**: ${target.gravityMs2} m/s²
-- **Mass**: ${target.massKg}
-- **Fun Fact**: ${target.funFacts[0]}
-
-*(Tip: Add your Gemini API key in Settings ⚙️ to unlock unlimited live conversational Q&A!)*`;
-}
-
-function getFallbackQuiz(planet: PlanetData): QuizQuestion[] {
+// Standard Offline Astrophysics Quiz Dataset (Used when AI is offline)
+function getOfflineQuiz(planet: PlanetData): QuizQuestion[] {
   return [
     {
       id: `${planet.id}-q1`,
@@ -292,12 +306,12 @@ function getFallbackQuiz(planet: PlanetData): QuizQuestion[] {
     {
       id: `${planet.id}-q3`,
       planetId: planet.id,
-      question: `Which interesting fact belongs to ${planet.name}?`,
+      question: `Which interesting astrophysics fact belongs to ${planet.name}?`,
       options: [
         planet.funFacts[0],
         "It is made entirely of solid gold",
         "It orbits the Sun in 1 hour",
-        "It has no gravitational pull",
+        "It has zero gravity",
       ],
       correctAnswerIndex: 0,
       explanation: planet.funFacts[0],
