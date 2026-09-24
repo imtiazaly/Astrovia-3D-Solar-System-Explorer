@@ -4,11 +4,8 @@ import {
   Key,
   Check,
   ShieldCheck,
-  Sparkles,
   ExternalLink,
-  Info,
   Globe,
-  AlertCircle,
   Trash2,
 } from "lucide-react";
 import {
